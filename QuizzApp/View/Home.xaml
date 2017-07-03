@@ -1,0 +1,51 @@
+﻿<Page x:Class="QuizzApp.View.Home"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:QuizzApp.View"
+      xmlns:viewModel="clr-namespace:QuizzApp.ViewModel"
+      
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="Home">
+    <Page.DataContext>
+        <viewModel:HomeViewModel/>
+    </Page.DataContext>
+
+    <Grid>
+        <Label Content="{Binding AppTitle}" HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Top" Width="416" HorizontalContentAlignment="Center" FontFamily="Roboto Black" FontSize="48"/>
+        <TextBlock Text="Category" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" 
+                   Margin="156,190,296,190" FontSize="16" Width="148"/>
+        <ComboBox x:Name="categorySelect"
+                  ItemsSource="{Binding CategoryList}"
+                  HorizontalAlignment="Center" 
+                  VerticalAlignment="Center" 
+                  Margin="0,0,-150,0"
+                  Width="120" FontSize="14" SelectedIndex="0">
+        </ComboBox>
+        <TextBlock Text="Number of questions" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" 
+                   Margin="0,60,140,0" FontSize="16"/>
+        <ComboBox x:Name="numberBox"
+                  ItemsSource="{Binding NumberValues}"
+                  HorizontalAlignment="Center" 
+                  VerticalAlignment="Center" 
+                  Margin="0,60,-150,0"
+                  Width="120" FontSize="14" SelectedIndex="0">
+        </ComboBox>
+        <Button x:Name="startButton" Content="Start" 
+                Margin="0,200,0,0" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Center" 
+                Width="86" FontSize="18" 
+                Click="StartButton_Click"/>
+        <Rectangle Fill="#66FFFFFF" RadiusX="10" RadiusY="10" Panel.ZIndex="-10" VerticalAlignment="Center" Height="145" HorizontalAlignment="Center" Width="300" Margin="0,101,0,0" />
+
+        <Label Content="{Binding TotalCount}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,20"></Label>
+
+    </Grid>
+</Page>

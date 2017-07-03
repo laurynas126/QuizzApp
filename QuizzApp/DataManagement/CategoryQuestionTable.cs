@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using QuizzApp.Model;
+using QuizzApp.Utility;
+using System.Data.SQLite;
+
+namespace QuizzApp.DataManagement
+{
+    public class CategoryQuestionTable
+    {
+        public int AddCategoryQuestions(Category cat, List<Question> questionList)
+        {
+            var count = 0;
+            var connection = new SQLiteConnection(StringResources.ConnectionString);
+            connection.Open();
+            using (var transaction = connection.BeginTransaction())
+            {
+                if(cat.Id == -1)
+                    CategoryTable.AddCategory(connection, cat);
+                foreach(var question in questionList)
+                {
+                    if (question.Id == -1) QuestionTable.AddQuestion(connection, question);
+                }
+                var command = new SQLiteCommand("INSERT INTO category_question VALUES (@category,@question)", connection);
+                var categoryCol = new SQLiteParameter("category", cat.Id);
+                var questionCol = new SQLiteParameter("question");
+                command.Parameters.Add(categoryCol);
+                command.Parameters.Add(questionCol);
+                foreach(var question in questionList)
+                {
+                    questionCol.Value = question.Id;
+                    count += command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            connection.Close();
+            return count;
+        }
+
+    }
+}
