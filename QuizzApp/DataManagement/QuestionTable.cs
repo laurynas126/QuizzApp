@@ -43,10 +43,14 @@ namespace QuizzApp.DataManagement
                     var question = new Question();
                     question.Id = (long)reader["id"];
                     question.QuestionText = reader["question"].ToString();
+                    if (question.QuestionText.Equals(string.Empty))
+                        continue;
                     question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
-                    question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
+                    AddQuestions(question, false, 
+                        reader["alt_answer1"].ToString(),
+                        reader["alt_answer2"].ToString(),
+                        reader["alt_answer3"].ToString());
+
                     question.Answers.Shuffle();
                     questionList.Add(question);
                 }
@@ -55,15 +59,24 @@ namespace QuizzApp.DataManagement
             //questionList.Shuffle();
         }
 
+        public void AddQuestions(Question question, bool correct, params string[] values)
+        {
+            foreach (var el in values.Where(x => x != string.Empty))
+            {
+                question.Answers.Add(new Answer(el, correct));
+            }
+                
+        }
+
         public string SQLQuerryGenerator(long category)
         {
             string result = "SELECT * FROM multi_question";
             if (category != 0)
             {
                 result += " JOIN category_question ON category_question.questionID = multi_question.id " +
-                   "WHERE category_question.categoryID = " + category;
+                   $"WHERE category_question.categoryID = {category}";
             }
-            result += " ORDER BY RANDOM() LIMIT " + questionCount;
+            result += $" ORDER BY RANDOM() LIMIT {questionCount}";
             return result;
         }
 
@@ -103,7 +116,7 @@ namespace QuizzApp.DataManagement
         public static long GetQuestionId(SQLiteConnection connection, string question)
         {
             long result = -1;
-            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = ?", connection))
+            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question", connection))
             {
                 command.Parameters.Add(new SQLiteParameter("question", question));
                 var resultQuerry = command.ExecuteScalar();

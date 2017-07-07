@@ -70,7 +70,6 @@ namespace QuizzApp.View
         private void CorrectButton(Button button)
         {
             button.Background = new SolidColorBrush(Colors.LimeGreen);
-            //button.Background = new LinearGradientBrush(Colors.White, Colors.LimeGreen, 90.0);
         }
 
         private static T FindVisualChild<T>(DependencyObject depObj) where T : DependencyObject
@@ -92,8 +91,7 @@ namespace QuizzApp.View
 
         private void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            var element = sender as UIElement;
-            MakeHidden(element);
+            MakeHidden(sender as UIElement);
             if (this.DataContext is QuizzViewModel context)
             {
                 context.NextQuestion();
@@ -104,9 +102,7 @@ namespace QuizzApp.View
         private static void MakeHidden(UIElement sender)
         {
             if(sender != null)
-            {
                 sender.Visibility = Visibility.Hidden;
-            }
         }
     }
 }
