@@ -19,7 +19,7 @@ namespace QuizzApp.DataManagement
             using (var transaction = connection.BeginTransaction())
             {
                 if(cat.Id == -1)
-                    CategoryTable.AddCategory(connection, cat);
+                    CategoryTable.SaveCategory(connection, cat);
                 foreach(var question in questionList)
                 {
                     if (question.Id == -1) QuestionTable.AddQuestion(connection, question);
@@ -40,5 +40,20 @@ namespace QuizzApp.DataManagement
             return count;
         }
 
+        public static void DeleteQuestionsFromCategory(Category category)
+        {
+            if (category.Id == -1)
+                return;
+            var connection = new SQLiteConnection(StringResources.ConnectionString);
+            connection.Open();
+            using (var command = new SQLiteCommand("DELETE FROM category_question WHERE categoryID = @id", connection))
+            {
+                var categoryCol = new SQLiteParameter("id", category.Id);
+                command.Parameters.Add(categoryCol);
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
+
+        }
     }
 }

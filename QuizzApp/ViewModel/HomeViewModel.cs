@@ -35,9 +35,9 @@ namespace QuizzApp.ViewModel
         private void LoadCategories(CategoryTable loader)
         {
             //var cqt = new CategoryQuestionTable();
-            //var category = new Category("CAT1\");SELECT * FROM category;--");
+            //var category = new Category("CAT1");
             //var catTable = new CategoryTable();
-            //catTable.AddCategory(category);
+            //catTable.SaveCategory(category);
             //var question = new Question("TESTQ1", new string[] { "A", "B", "C", "D" });
             //var qTable = new QuestionTable();
             //qTable.AddQuestion(question);
@@ -45,7 +45,7 @@ namespace QuizzApp.ViewModel
             //var question2 = new Question("TESTQ2", new string[] { "AA", "BB", "CC", "DD" });
 
 
-            CategoryList = loader.LoadAllCategories();
+            CategoryList = CategoryTable.GetAllCategories();
             CategoryList.Insert(0, new Category(0, "All"));
         }
     }

@@ -17,7 +17,7 @@ namespace QuizzApp.DataManagement
         {
         }
 
-        public List<Category> LoadAllCategories()
+        public static List<Category> GetAllCategories()
         {
             List<Category> resultList = new List<Category>();
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
@@ -55,25 +55,28 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
-        public void AddCategory(Category category)
+        public void SaveCategory(Category category)
         {
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
-                    AddCategory(connection, category);
+                    SaveCategory(connection, category);
                     transaction.Commit();
                 }
                 connection.Close();
             }
         }
 
-        public static void AddCategory(SQLiteConnection connection, Category category)
+        public static void SaveCategory(SQLiteConnection connection, Category category)
         {
             var command = new SQLiteCommand(connection);
             SQLiteParameter param = new SQLiteParameter("title", category.Title);
-            command.CommandText = "INSERT INTO category VALUES(NULL, @title)";
+            if (category.Id == -1)
+                command.CommandText = "INSERT INTO category VALUES(NULL, @title)";
+            else
+                command.CommandText = "UPDATE category SET title = @title";
             command.Parameters.Add(param);
             command.ExecuteNonQuery();
             category.Id = GetCategoryId(connection, category.Title);
@@ -93,6 +96,18 @@ namespace QuizzApp.DataManagement
                 }
             }
             return result;
+        }
+
+        public static void DeleteCategory(Category category)
+        {
+            var connection = new SQLiteConnection(StringResources.ConnectionString);
+            connection.Open();
+            using (var command = new SQLiteCommand("DELETE FROM category WHERE id = @id", connection))
+            {
+                command.Parameters.Add(new SQLiteParameter("id", category.Id));
+                command.ExecuteNonQuery();           
+            }
+            connection.Close();
         }
 
     }

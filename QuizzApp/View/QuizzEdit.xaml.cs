@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizzApp.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,24 @@ namespace QuizzApp.View
         public QuizzEdit()
         {
             InitializeComponent();
+        }
+
+        private void QuitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.GoBack();
+        }
+
+        private void CategoryListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private void DeleteCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditViewModel vm)
+            {
+                vm.DeleteCommand();
+            }
         }
     }
 }

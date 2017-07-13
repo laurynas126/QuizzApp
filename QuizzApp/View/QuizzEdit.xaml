@@ -4,11 +4,78 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:QuizzApp.View"
+      xmlns:viewModel="clr-namespace:QuizzApp.ViewModel"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="450" d:DesignWidth="650"
       Title="QuizzEdit">
 
+    <Page.DataContext>
+        <viewModel:EditViewModel/>
+    </Page.DataContext>
+
     <Grid>
+        <ListView x:Name="CategoryListView" 
+                  ItemsSource="{Binding CategoryList}"
+                  SelectedItem="{Binding SelectedCategory}"
+                  VerticalAlignment="Top" Width="240"
+                  Margin="20,20,100,0" 
+                  HorizontalAlignment="Left" Height="140" VerticalContentAlignment="Center" SelectionChanged="CategoryListView_SelectionChanged" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Title" Width="225" DisplayMemberBinding="{Binding Title}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="NewCategoryButton" 
+                Content="New" 
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Center" 
+                VerticalAlignment="Top" 
+                Margin="20,155,0,0" 
+                Width="80"/>
+        <Button x:Name="SaveCategoryButton" 
+                Content="Save"
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Center" 
+                VerticalAlignment="Top" 
+                Margin="100,155,0,0" 
+                Width="80"/>
+        <Button x:Name="DeleteCategoryButton" 
+                Content="Delete"
+                IsEnabled="{Binding CanDelete}"
+                HorizontalAlignment="Left" 
+                VerticalContentAlignment="Center" 
+                VerticalAlignment="Top" 
+                Margin="180,155,0,0" 
+                Width="80" Click="DeleteCategoryButton_Click"/>
         
+        <TextBlock Text="Category" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="20,180,0,0" FontWeight="Bold" />
+        <TextBox Text="{Binding SelectedCategory.Title}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="185" Margin="75,180,0,0" />
+        <ListView x:Name="SelectedQuestionList"
+                  ItemsSource="{Binding SelectedCategory.Questions}"
+                  SelectedItem="{Binding SelectedQuestion}"
+                  HorizontalAlignment="Left" Width="240" Margin="20,201,0,20">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Question" Width="230" DisplayMemberBinding="{Binding QuestionText}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBlock Text="Question" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="270,20,0,0" FontWeight="Bold" />
+        <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="330,20,20,0" MinWidth="200" />
+        <Button Content="Save" 
+                VerticalAlignment="Bottom" 
+                HorizontalAlignment="Right" 
+                Margin="0,0,70,20" 
+                Width="48" 
+                FontSize="14" />
+        
+        <Button x:Name="quitButton" 
+                Content="Return" 
+                Margin="0,0,20,20" 
+                Click="QuitButton_Click" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                BorderThickness="0" FontSize="14"/>
     </Grid>
 </Page>

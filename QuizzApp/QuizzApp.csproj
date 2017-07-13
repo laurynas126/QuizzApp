@@ -96,7 +96,9 @@
     <Compile Include="DataManagement\QuestionTable.cs" />
     <Compile Include="Model\QuizzStats.cs" />
     <Compile Include="Utility\CollectionUtil.cs" />
+    <Compile Include="Utility\CommandHandler.cs" />
     <Compile Include="Utility\StringResources.cs" />
+    <Compile Include="ViewModel\EditViewModel.cs" />
     <Compile Include="ViewModel\HomeViewModel.cs" />
     <Compile Include="ViewModel\QuizzViewModel.cs" />
     <Compile Include="View\QuizzEdit.xaml.cs">

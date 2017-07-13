@@ -57,6 +57,7 @@ namespace QuizzApp.View
         private void IncorrectButton(Button button)
         {
             button.Background = new SolidColorBrush(Colors.IndianRed);
+            button.Foreground = new SolidColorBrush(Colors.White);
             foreach (var item in itemControl.Items)
             {
                 var buttonAnswer = (Answer)item;

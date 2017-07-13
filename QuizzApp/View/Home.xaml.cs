@@ -36,5 +36,11 @@ namespace QuizzApp.View
             QuizzView quizz = new QuizzView(model);
             this.NavigationService.Navigate(quizz);
         }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            QuizzEdit view = new QuizzEdit();
+            this.NavigationService.Navigate(view);
+        }
     }
 }

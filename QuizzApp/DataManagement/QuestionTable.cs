@@ -59,7 +59,36 @@ namespace QuizzApp.DataManagement
             //questionList.Shuffle();
         }
 
-        public void AddQuestions(Question question, bool correct, params string[] values)
+        public static List<Question> GetQuestionsByCategory(long category = 0)
+        {
+            List<Question> questions = new List<Question>();
+            using (var connection = new SQLiteConnection(StringResources.ConnectionString))
+            {
+                connection.Open();
+                var command = new SQLiteCommand(connection);
+                command.CommandText = "SELECT * FROM multi_question JOIN category_question ON category_question.questionID = multi_question.id " +
+                   $"WHERE category_question.categoryID = {category}";
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var question = new Question();
+                    question.Id = (long)reader["id"];
+                    question.QuestionText = reader["question"].ToString();
+                    if (question.QuestionText.Equals(string.Empty))
+                        continue;
+                    question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
+                    AddQuestions(question, false,
+                        reader["alt_answer1"].ToString(),
+                        reader["alt_answer2"].ToString(),
+                        reader["alt_answer3"].ToString());
+                    questions.Add(question);
+                }
+                connection.Close();
+            }
+            return questions;
+        }
+
+        public static void AddQuestions(Question question, bool correct, params string[] values)
         {
             foreach (var el in values.Where(x => x != string.Empty))
             {

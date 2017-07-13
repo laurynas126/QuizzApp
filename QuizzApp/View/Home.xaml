@@ -43,6 +43,11 @@
                 HorizontalAlignment="Center" 
                 Width="86" FontSize="18" 
                 Click="StartButton_Click"/>
+        <Button x:Name="editButton" Content="Edit" 
+                Margin="0,0,20,20" 
+                VerticalAlignment="Bottom" 
+                HorizontalAlignment="Right" FontSize="14" 
+                Click="EditButton_Click" Width="50"/>
         <Rectangle Fill="#66FFFFFF" RadiusX="10" RadiusY="10" Panel.ZIndex="-10" VerticalAlignment="Center" Height="145" HorizontalAlignment="Center" Width="300" Margin="0,101,0,0" />
 
         <Label Content="{Binding TotalCount}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,20"></Label>

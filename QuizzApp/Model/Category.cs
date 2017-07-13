@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizzApp.DataManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,19 @@ namespace QuizzApp.Model
         public long Id { get; set; } = -1;
 
         public string Title { get; set; }
+
+        private List<Question> _questions;
+        public List<Question> Questions {
+            get
+            {
+                if (_questions == null) _questions = QuestionTable.GetQuestionsByCategory(Id);
+                return _questions;
+            }
+            set
+            {
+                _questions = value;
+            }
+        }
 
         public Category() { }
 
