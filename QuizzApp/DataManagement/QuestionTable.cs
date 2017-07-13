@@ -36,7 +36,7 @@ namespace QuizzApp.DataManagement
             {
                 connection.Open();
                 var command = new SQLiteCommand(connection);
-                command.CommandText = SQLQuerryGenerator(category);
+                command.CommandText = SQLQuerryGenerator(category, true, questionCount);
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -45,11 +45,13 @@ namespace QuizzApp.DataManagement
                     question.QuestionText = reader["question"].ToString();
                     if (question.QuestionText.Equals(string.Empty))
                         continue;
-                    question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
-                    AddQuestions(question, false, 
-                        reader["alt_answer1"].ToString(),
-                        reader["alt_answer2"].ToString(),
-                        reader["alt_answer3"].ToString());
+                    var correctAnswer = reader["correct_answer"].ToString();
+                    if (correctAnswer.Equals(string.Empty))
+                        continue;
+                    question.Answers.Add(new Answer(correctAnswer, true));
+                    question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
+                    question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
+                    question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
                     question.Answers.Shuffle();
                     questionList.Add(question);
                 }
@@ -60,30 +62,21 @@ namespace QuizzApp.DataManagement
         public static List<Question> GetQuestionsByCategory(long category = 0, bool inverted = false)
         {
             List<Question> questions = new List<Question>();
-            string equalSign = "=";
-            if(inverted)
-            {
-                equalSign = "!=";
-            }
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
                 var command = new SQLiteCommand(connection);
-                command.CommandText = "SELECT * FROM multi_question JOIN category_question ON category_question.questionID = multi_question.id " +
-                   $"WHERE category_question.categoryID {equalSign} {category}";
+                command.CommandText = SQLQuerryGenerator(category);
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     var question = new Question();
                     question.Id = (long)reader["id"];
                     question.QuestionText = reader["question"].ToString();
-                    if (question.QuestionText.Equals(string.Empty))
-                        continue;
                     question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
-                    AddQuestions(question, false,
-                        reader["alt_answer1"].ToString(),
-                        reader["alt_answer2"].ToString(),
-                        reader["alt_answer3"].ToString());
+                    question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
+                    question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
+                    question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
                     questions.Add(question);
                 }
                 connection.Close();
@@ -91,16 +84,7 @@ namespace QuizzApp.DataManagement
             return questions;
         }
 
-        public static void AddQuestions(Question question, bool correct, params string[] values)
-        {
-            foreach (var el in values.Where(x => x != string.Empty))
-            {
-                question.Answers.Add(new Answer(el, correct));
-            }
-                
-        }
-
-        public string SQLQuerryGenerator(long category)
+        public static string SQLQuerryGenerator(long category, bool random = false, int count = 10)
         {
             string result = "SELECT * FROM multi_question";
             if (category != 0)
@@ -108,25 +92,28 @@ namespace QuizzApp.DataManagement
                 result += " JOIN category_question ON category_question.questionID = multi_question.id " +
                    $"WHERE category_question.categoryID = {category}";
             }
-            result += $" ORDER BY RANDOM() LIMIT {questionCount}";
+            if (random)
+            {
+                result += $" ORDER BY RANDOM() LIMIT {count}";
+            }
             return result;
         }
 
-        public void AddQuestion(Question question)
+        public static void SaveQuestion(Question question)
         {
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
-                    AddQuestion(connection, question);
+                    SaveQuestion(connection, question);
                     transaction.Commit();
                 }
                 connection.Close();
             }
         }
 
-        public static void AddQuestion(SQLiteConnection connection, Question question)
+        public static void SaveQuestion(SQLiteConnection connection, Question question)
         {
             var command = new SQLiteCommand(connection);
             SQLiteParameter questionCol = new SQLiteParameter("question", question.QuestionText);
@@ -134,15 +121,25 @@ namespace QuizzApp.DataManagement
             SQLiteParameter answer1 = new SQLiteParameter("alt1", question.Answers[1]);
             SQLiteParameter answer2 = new SQLiteParameter("alt2", question.Answers[2]);
             SQLiteParameter answer3 = new SQLiteParameter("alt3", question.Answers[3]);
-            command.CommandText = "INSERT INTO multi_question VALUES(NULL, @question, @correct, @alt1, @alt2, @alt3)";
+            if (question.Id == -1)
+                command.CommandText = "INSERT INTO multi_question VALUES(NULL, @question, @correct, @alt1, @alt2, @alt3)";
+            else
+                command.CommandText = "UPDATE multi_question SET question = @question, correct_answer = @correct, alt_answer1 = @alt1, alt_answer2 = @alt2, alt_answer3 = @alt3" +
+                    $" WHERE id = {question.Id}";
             command.Parameters.Add(questionCol);
             command.Parameters.Add(answer0);
             command.Parameters.Add(answer1);
             command.Parameters.Add(answer2);
             command.Parameters.Add(answer3);
-            command.ExecuteNonQuery();
-
-            question.Id = GetQuestionId(connection, question.QuestionText);
+            try
+            {
+                command.ExecuteNonQuery();
+                if (question.Id == -1) question.Id = GetQuestionId(connection, question.QuestionText);
+            }
+            catch (SQLiteException)
+            {
+                throw;
+            }
         }
 
         public static long GetQuestionId(SQLiteConnection connection, string question)
@@ -158,6 +155,18 @@ namespace QuizzApp.DataManagement
                 }
             }
             return result;
+        }
+
+        public static void DeleteQuestion(Question question)
+        {
+            var connection = new SQLiteConnection(StringResources.ConnectionString);
+            connection.Open();
+            using (var command = new SQLiteCommand("DELETE FROM multi_question WHERE id = @id", connection))
+            {
+                command.Parameters.Add(new SQLiteParameter("id", question.Id));
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
         }
 
     }

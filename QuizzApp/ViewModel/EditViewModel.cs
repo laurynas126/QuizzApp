@@ -22,28 +22,52 @@ namespace QuizzApp.ViewModel
 
         public ObservableCollection<Category> CategoryList { get => _categories; }
 
-        public bool CanDelete { get => SelectedCategory != null; }
+        private readonly List<Question> _questions = QuestionTable.GetQuestionsByCategory(0);
+
+        public ObservableCollection<Question> AllQuestionList
+        {
+            get
+            {
+                ObservableCollection<Question> collection;
+                if (IsSelectedCategory)
+                    collection = new ObservableCollection<Question>(_questions.Where(x => !SelectedCategory.Questions.Contains(x)));
+                else
+                    collection = new ObservableCollection<Question>(_questions);
+                return collection;
+            }
+        }
+
+        //Can add question to category?
+        public bool CanAdd { get => SelectedCategory != null && SelectedQuestion != null && !SelectedCategory.Questions.Contains(SelectedQuestion); }
+        public bool CanRemove { get => SelectedCategory != null && SelectedQuestion != null && SelectedCategory.Questions.Contains(SelectedQuestion); }
 
         private Question _question;
+        public bool IsSelectedQuestion { get => SelectedQuestion != null; }
         public Question SelectedQuestion {
             get => _question;
             set
             {
                 _question = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelectedQuestion"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanAdd"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanRemove"));
             }
         }
 
         private Category _category;
+        public bool IsSelectedCategory { get => SelectedCategory != null; }
         public Category SelectedCategory {
             get => _category;
             set
             {
                 _category = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanDelete"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelectedCategory"));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedCategory"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanAdd"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanRemove"));
             }
-
         }
 
         public EditViewModel() { }
@@ -79,6 +103,61 @@ namespace QuizzApp.ViewModel
                     MessageBox.Show(StringResources.DuplicateCategoryError);
                 }
             }
+        }
+
+        public void NewQuestion()
+        {
+            SelectedQuestion = new Question("Question text", new string[] { "", "", "", "" });
+        }
+
+        public void SaveQuestion()
+        {
+            try
+            {
+                QuestionTable.SaveQuestion(SelectedQuestion);
+                if (!_questions.Contains(SelectedQuestion)) _questions.Add(SelectedQuestion);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+            }
+            catch (SQLiteException ex)
+            {
+                if (ex.ResultCode == SQLiteErrorCode.Constraint)
+                {
+                    MessageBox.Show(StringResources.DuplicateCategoryError);
+                }
+            }
+        }
+
+        public void DeleteQuestion()
+        {
+            QuestionTable.DeleteQuestion(SelectedQuestion);
+            CategoryQuestionTable.DeleteQuestion(SelectedQuestion);
+            _questions.Remove(SelectedQuestion);
+            if(IsSelectedCategory)
+            {
+                SelectedCategory.Questions.Remove(SelectedQuestion);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedCategory"));
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+        }
+
+        public void AddToCategory()
+        {
+            if (!CanAdd) return;
+            if (CategoryQuestionTable.AddCategoryQuestion(SelectedCategory, SelectedQuestion) <= 0)
+            {
+                MessageBox.Show("Could not add question to category");
+                return;
+            }
+            SelectedCategory.Questions.Add(SelectedQuestion);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+        }
+
+        public void RemoveFromCategory()
+        {
+            if (!CanRemove) return;
+            CategoryQuestionTable.DeleteCategoryQuestion(SelectedCategory, SelectedQuestion);
+            SelectedCategory.Questions.Remove(SelectedQuestion);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
         }
     }
 }

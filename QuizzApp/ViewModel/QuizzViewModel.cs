@@ -48,7 +48,11 @@ namespace QuizzApp.ViewModel
         public ObservableCollection<Answer> Answers
         {
             get {
-                if(_currentQuestion != null) return new ObservableCollection<Answer>(_currentQuestion.Answers);
+                if (_currentQuestion != null)
+                {
+                    var result = _currentQuestion.Answers.Where(x => !string.Empty.Equals(x.Text));
+                    return new ObservableCollection<Answer>(result);
+                }
                 return null;
             }
         }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuizzApp.Model
 {
-    public struct Answer
+    public class Answer
     {
-        public string Text { get; }
+        public string Text { get; set; }
         public bool Correct { get; }
 
         public Answer(string text, bool correct)

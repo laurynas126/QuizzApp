@@ -36,5 +36,14 @@ namespace QuizzApp.Model
                 Answers.Add(new Answer(answers[i], false));
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Question q)
+            {
+                return q.Id == this.Id;
+            }
+            return false;
+        }
     }
 }

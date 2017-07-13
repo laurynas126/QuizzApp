@@ -10,5 +10,6 @@ namespace QuizzApp.Utility
     {
         public static string ConnectionString { get; } = "Data Source=" + Properties.Resources.DBFile + ";Version=3;";
         public static string DuplicateCategoryError { get; } = "Category with this name already exists";
+        public static string DuplicateQuestionError { get; } = "Question with this name already exists";
     }
 }

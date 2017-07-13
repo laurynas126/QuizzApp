@@ -17,12 +17,12 @@
         <ListView x:Name="CategoryListView" 
                   ItemsSource="{Binding CategoryList}"
                   SelectedItem="{Binding SelectedCategory}"
-                  VerticalAlignment="Top" Width="240"
+                  VerticalAlignment="Top" Width="270"
                   Margin="20,20,100,0" 
-                  HorizontalAlignment="Left" Height="140" VerticalContentAlignment="Center" SelectionChanged="CategoryListView_SelectionChanged" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                  HorizontalAlignment="Left" Height="160" VerticalContentAlignment="Center" SelectionChanged="CategoryListView_SelectionChanged" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Title" Width="225" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="Categories" Width="265" DisplayMemberBinding="{Binding Title}" />
                 </GridView>
             </ListView.View>
         </ListView>
@@ -31,51 +31,110 @@
                 HorizontalAlignment="Left" 
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
-                Margin="20,155,0,0" 
-                Width="80" Click="NewCategoryButton_Click"/>
+                Margin="20,170,0,0" 
+                Width="90" Click="NewCategoryButton_Click"/>
         <Button x:Name="SaveCategoryButton" 
                 Content="Save"
                 HorizontalAlignment="Left" 
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
-                Margin="100,155,0,0" 
-                Width="80" Click="SaveCategoryButton_Click"/>
+                Margin="110,170,0,0" 
+                Width="90" Click="SaveCategoryButton_Click"/>
         <Button x:Name="DeleteCategoryButton" 
                 Content="Delete"
-                IsEnabled="{Binding CanDelete}"
+                IsEnabled="{Binding IsSelectedCategory}"
                 HorizontalAlignment="Left" 
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
-                Margin="180,155,0,0" 
-                Width="80" Click="DeleteCategoryButton_Click"/>
-        
-        <TextBlock Text="Category" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="20,180,0,0" FontWeight="Bold" />
-        <TextBox Text="{Binding SelectedCategory.Title}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="185" Margin="75,180,0,0" />
+                Margin="200,170,0,0" 
+                Width="90" Click="DeleteCategoryButton_Click"/>
+
+        <TextBlock Text="Category" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="20,195,0,0" FontWeight="Bold" />
+        <TextBox Text="{Binding SelectedCategory.Title}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="75,195,0,0" Width="215" />
         <ListView x:Name="SelectedQuestionList"
                   ItemsSource="{Binding SelectedCategory.Questions}"
-                  SelectedItem="{Binding SelectedQuestion}"
-                  HorizontalAlignment="Left" Width="240" Margin="20,201,0,20">
+                  SelectedItem="{Binding SelectedQuestion}" Margin="20,215,360,10" MinWidth="270" HorizontalAlignment="Left">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Question" Width="230" DisplayMemberBinding="{Binding QuestionText}" />
+                    <GridViewColumn Header="Questions" Width="260" DisplayMemberBinding="{Binding QuestionText}" />
                 </GridView>
             </ListView.View>
         </ListView>
-        <TextBlock Text="Question" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="270,20,0,0" FontWeight="Bold" />
-        <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="330,20,20,0" MinWidth="200" />
-        <Button Content="Save" 
-                VerticalAlignment="Bottom" 
-                HorizontalAlignment="Right" 
-                Margin="0,0,70,20" 
-                Width="48" 
-                FontSize="14" />
+        <ListView x:Name="AllQuestionList"
+                  ItemsSource="{Binding AllQuestionList}"
+                  SelectedItem="{Binding SelectedQuestion}" Margin="340,195,10,10" MinWidth="270" AutomationProperties.IsColumnHeader="True">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Questions" Width="{Binding Path=AllQuestionList, ElementName=Width}" DisplayMemberBinding="{Binding QuestionText}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBlock Text="Question" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="300,20,0,0" FontWeight="Bold" />
+        <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="355,20,60,0" MinWidth="235" />
+        <TextBlock Text="Correct " HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="305,50,0,0" FontWeight="Bold" />
+        <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}" HorizontalAlignment="Left" Margin="355,50,10,0" Height="150" VerticalAlignment="Top" MinWidth="235">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBox x:Name="answer" 
+                            Text="{Binding Text}"
+                            HorizontalAlignment="Stretch" 
+                            Background="White"
+                            FontWeight="Normal"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
         
+        <Button  x:Name="NewQuestionButton"
+                 Content="New Question" 
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Top" 
+                 Margin="340,170,0,10" 
+                 VerticalContentAlignment="Center" Click="NewQuestionButton_Click" Width="90">
+        </Button>
+        <Button  x:Name="SaveQuestionButton"
+                 Content="Save"
+                 IsEnabled="{Binding IsSelectedQuestion}"           
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Top" 
+                 Margin="430,170,0,10" 
+                 VerticalContentAlignment="Center" Click="SaveQuestionButton_Click" Width="90">
+        </Button>
+        <Button  x:Name="DeleteQuestionButton"
+                 Content="Delete" 
+                 IsEnabled="{Binding IsSelectedQuestion}"           
+                 HorizontalAlignment="Right" 
+                 VerticalAlignment="Top" 
+                 Margin="520,170,10,10" 
+                 VerticalContentAlignment="Center" Width="60" Click="DeleteQuestionButton_Click" HorizontalContentAlignment="Center">
+        </Button>
+
+        <Button  x:Name="AddToCategory"
+                 Content="&lt;"
+                 IsEnabled="{Binding CanAdd}"
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Center" 
+                 Margin="300,150,0,0" 
+                 VerticalContentAlignment="Center"
+                 Width="30" Click="AddToCategory_Click">
+        </Button>
+        <Button  x:Name="RemoveFromCategory"
+                 Content=">"
+                 IsEnabled="{Binding CanRemove}"
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Center" 
+                 Margin="300,200,0,0" 
+                 VerticalContentAlignment="Center"
+                 Width="30" Click="RemoveFromCategory_Click">
+        </Button>
+
+
         <Button x:Name="quitButton" 
                 Content="Return" 
-                Margin="0,0,20,20" 
+                Margin="0,20,10,10" 
                 Click="QuitButton_Click" 
                 HorizontalAlignment="Right" 
-                VerticalAlignment="Bottom" 
-                BorderThickness="0" FontSize="14"/>
+                VerticalAlignment="Top" 
+                BorderThickness="0"/>
     </Grid>
 </Page>

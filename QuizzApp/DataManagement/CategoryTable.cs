@@ -76,15 +76,15 @@ namespace QuizzApp.DataManagement
             if (category.Id == -1)
                 command.CommandText = "INSERT INTO category VALUES(NULL, @title)";
             else
-                command.CommandText = "UPDATE category SET title = @title";
+                command.CommandText = $"UPDATE category SET title = @title WHERE id = {category.Id}";
             command.Parameters.Add(param);
             try
             {
                 command.ExecuteNonQuery();
-                category.Id = GetCategoryId(connection, category.Title);
+                if (category.Id == -1) category.Id = GetCategoryId(connection, category.Title);
 
             }
-            catch (SQLiteException ex)
+            catch (SQLiteException)
             {
                 throw;
             }
