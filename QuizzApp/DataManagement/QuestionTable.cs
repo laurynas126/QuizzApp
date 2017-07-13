@@ -50,24 +50,27 @@ namespace QuizzApp.DataManagement
                         reader["alt_answer1"].ToString(),
                         reader["alt_answer2"].ToString(),
                         reader["alt_answer3"].ToString());
-
                     question.Answers.Shuffle();
                     questionList.Add(question);
                 }
                 connection.Close();
             }
-            //questionList.Shuffle();
         }
 
-        public static List<Question> GetQuestionsByCategory(long category = 0)
+        public static List<Question> GetQuestionsByCategory(long category = 0, bool inverted = false)
         {
             List<Question> questions = new List<Question>();
+            string equalSign = "=";
+            if(inverted)
+            {
+                equalSign = "!=";
+            }
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
                 var command = new SQLiteCommand(connection);
                 command.CommandText = "SELECT * FROM multi_question JOIN category_question ON category_question.questionID = multi_question.id " +
-                   $"WHERE category_question.categoryID = {category}";
+                   $"WHERE category_question.categoryID {equalSign} {category}";
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {

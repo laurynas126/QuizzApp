@@ -43,5 +43,21 @@ namespace QuizzApp.View
                 vm.DeleteCommand();
             }
         }
+
+        private void NewCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditViewModel vm)
+            {
+                vm.NewCategory();
+            }
+        }
+
+        private void SaveCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditViewModel vm)
+            {
+                vm.SaveCategory();
+            }
+        }
     }
 }

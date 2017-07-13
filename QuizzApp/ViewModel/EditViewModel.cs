@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +57,27 @@ namespace QuizzApp.ViewModel
                 CategoryTable.DeleteCategory(SelectedCategory);
                 CategoryList.Remove(SelectedCategory);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CategoryList"));
+            }
+        }
+
+        public void NewCategory()
+        {
+            SelectedCategory = new Category("Untitled");
+            CategoryList.Add(SelectedCategory);
+        }
+
+        public void SaveCategory()
+        {
+            try
+            {
+                CategoryTable.SaveCategory(SelectedCategory);
+            }
+            catch (SQLiteException ex)
+            {
+                if (ex.ResultCode == SQLiteErrorCode.Constraint)
+                {
+                    MessageBox.Show(StringResources.DuplicateCategoryError);
+                }
             }
         }
     }

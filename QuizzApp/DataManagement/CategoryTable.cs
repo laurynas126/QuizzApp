@@ -55,7 +55,7 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
-        public void SaveCategory(Category category)
+        public static void SaveCategory(Category category)
         {
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
@@ -78,8 +78,16 @@ namespace QuizzApp.DataManagement
             else
                 command.CommandText = "UPDATE category SET title = @title";
             command.Parameters.Add(param);
-            command.ExecuteNonQuery();
-            category.Id = GetCategoryId(connection, category.Title);
+            try
+            {
+                command.ExecuteNonQuery();
+                category.Id = GetCategoryId(connection, category.Title);
+
+            }
+            catch (SQLiteException ex)
+            {
+                throw;
+            }
         }
 
 

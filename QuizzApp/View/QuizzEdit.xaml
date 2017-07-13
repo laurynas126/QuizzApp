@@ -32,14 +32,14 @@
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
                 Margin="20,155,0,0" 
-                Width="80"/>
+                Width="80" Click="NewCategoryButton_Click"/>
         <Button x:Name="SaveCategoryButton" 
                 Content="Save"
                 HorizontalAlignment="Left" 
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
                 Margin="100,155,0,0" 
-                Width="80"/>
+                Width="80" Click="SaveCategoryButton_Click"/>
         <Button x:Name="DeleteCategoryButton" 
                 Content="Delete"
                 IsEnabled="{Binding CanDelete}"
