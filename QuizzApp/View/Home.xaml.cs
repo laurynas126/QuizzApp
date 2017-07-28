@@ -39,6 +39,8 @@ namespace QuizzApp.View
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
+            var window = Window.GetWindow(this);
+            window.WindowState = System.Windows.WindowState.Maximized;
             QuizzEdit view = new QuizzEdit();
             this.NavigationService.Navigate(view);
         }

@@ -70,7 +70,7 @@ namespace QuizzApp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quizz App.
+        ///   Looks up a localized string similar to Quest Genius.
         /// </summary>
         internal static string Title {
             get {

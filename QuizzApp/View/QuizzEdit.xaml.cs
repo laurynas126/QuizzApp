@@ -24,6 +24,7 @@ namespace QuizzApp.View
         public QuizzEdit()
         {
             InitializeComponent();
+            var father = this.Parent;
         }
 
         private void QuitButton_Click(object sender, RoutedEventArgs e)

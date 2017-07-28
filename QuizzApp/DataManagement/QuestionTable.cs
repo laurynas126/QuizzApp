@@ -131,15 +131,8 @@ namespace QuizzApp.DataManagement
             command.Parameters.Add(answer1);
             command.Parameters.Add(answer2);
             command.Parameters.Add(answer3);
-            try
-            {
-                command.ExecuteNonQuery();
-                if (question.Id == -1) question.Id = GetQuestionId(connection, question.QuestionText);
-            }
-            catch (SQLiteException)
-            {
-                throw;
-            }
+            command.ExecuteNonQuery();
+            if (question.Id == -1) question.Id = GetQuestionId(connection, question.QuestionText);
         }
 
         public static long GetQuestionId(SQLiteConnection connection, string question)

@@ -116,7 +116,7 @@
                  VerticalAlignment="Center" 
                  Margin="300,150,0,0" 
                  VerticalContentAlignment="Center"
-                 Width="30" Click="AddToCategory_Click">
+                 Width="30" Click="AddToCategory_Click" ToolTip="Add To Category">
         </Button>
         <Button  x:Name="RemoveFromCategory"
                  Content=">"
@@ -125,7 +125,7 @@
                  VerticalAlignment="Center" 
                  Margin="300,200,0,0" 
                  VerticalContentAlignment="Center"
-                 Width="30" Click="RemoveFromCategory_Click">
+                 Width="30" Click="RemoveFromCategory_Click" ToolTip="Remove From Category">
         </Button>
 
 

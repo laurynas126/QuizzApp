@@ -78,16 +78,8 @@ namespace QuizzApp.DataManagement
             else
                 command.CommandText = $"UPDATE category SET title = @title WHERE id = {category.Id}";
             command.Parameters.Add(param);
-            try
-            {
-                command.ExecuteNonQuery();
-                if (category.Id == -1) category.Id = GetCategoryId(connection, category.Title);
-
-            }
-            catch (SQLiteException)
-            {
-                throw;
-            }
+            command.ExecuteNonQuery();
+            if (category.Id == -1) category.Id = GetCategoryId(connection, category.Title);
         }
 
 

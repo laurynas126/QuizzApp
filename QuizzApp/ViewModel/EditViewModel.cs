@@ -112,17 +112,23 @@ namespace QuizzApp.ViewModel
 
         public void SaveQuestion()
         {
+            if (_questions.Contains(SelectedQuestion))
+            {
+                MessageBox.Show(StringResources.DuplicateQuestionError);
+                return;
+            }
             try
             {
                 QuestionTable.SaveQuestion(SelectedQuestion);
-                if (!_questions.Contains(SelectedQuestion)) _questions.Add(SelectedQuestion);
+                if (!_questions.Contains(SelectedQuestion))
+                    _questions.Add(SelectedQuestion);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
             }
             catch (SQLiteException ex)
             {
                 if (ex.ResultCode == SQLiteErrorCode.Constraint)
                 {
-                    MessageBox.Show(StringResources.DuplicateCategoryError);
+                    MessageBox.Show(StringResources.DuplicateQuestionError);
                 }
             }
         }

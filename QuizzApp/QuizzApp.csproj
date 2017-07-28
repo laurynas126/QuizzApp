@@ -95,6 +95,7 @@
     <Compile Include="Model\Question.cs" />
     <Compile Include="DataManagement\QuestionTable.cs" />
     <Compile Include="Model\QuizzStats.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Utility\CollectionUtil.cs" />
     <Compile Include="Utility\CommandHandler.cs" />
     <Compile Include="Utility\StringResources.cs" />
@@ -155,7 +156,7 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
