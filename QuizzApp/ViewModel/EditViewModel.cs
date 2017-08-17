@@ -1,4 +1,5 @@
-﻿using QuizzApp.DataManagement;
+﻿using Microsoft.Win32;
+using QuizzApp.DataManagement;
 using QuizzApp.Model;
 using QuizzApp.Utility;
 using System;
@@ -74,7 +75,7 @@ namespace QuizzApp.ViewModel
 
         public void DeleteCommand()
         {
-            var result = MessageBox.Show("This action cannot be undone. Are you sure?", "Delete category", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var result = MessageBox.Show("This action cannot be undone. Are you sure?", $"Delete \"{SelectedCategory.Title}\" category", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
                 CategoryQuestionTable.DeleteQuestionsFromCategory(SelectedCategory);
@@ -107,18 +108,14 @@ namespace QuizzApp.ViewModel
 
         public void NewQuestion()
         {
-            SelectedQuestion = new Question("Question text", new string[] { "", "", "", "" });
+            SelectedQuestion = new Question("", new string[] { "", "", "", "" });
         }
 
         public void SaveQuestion()
         {
-            if (_questions.Contains(SelectedQuestion))
-            {
-                MessageBox.Show(StringResources.DuplicateQuestionError);
-                return;
-            }
             try
             {
+                SelectedQuestion.ImageName = FileHandler.SaveFileToResourceFolder(SelectedQuestion.ImageName);
                 QuestionTable.SaveQuestion(SelectedQuestion);
                 if (!_questions.Contains(SelectedQuestion))
                     _questions.Add(SelectedQuestion);
@@ -129,6 +126,10 @@ namespace QuizzApp.ViewModel
                 if (ex.ResultCode == SQLiteErrorCode.Constraint)
                 {
                     MessageBox.Show(StringResources.DuplicateQuestionError);
+                }
+                else
+                {
+                    MessageBox.Show("Unknown SQL error: " + ex.ResultCode.ToString());
                 }
             }
         }
@@ -164,6 +165,18 @@ namespace QuizzApp.ViewModel
             CategoryQuestionTable.DeleteCategoryQuestion(SelectedCategory, SelectedQuestion);
             SelectedCategory.Questions.Remove(SelectedQuestion);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+        }
+
+        public void SelectImage()
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Title = "Select Image",
+                Filter = "Image Files (*.jpeg;*jpg;*png)|*.jpeg;*.jpg;*.png|JPG Files (*.jpg)|*.jpg|PNG Files (*.png)|*.png"
+            };
+            ofd.ShowDialog();
+            SelectedQuestion.ImageName = ofd.FileName;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
         }
     }
 }

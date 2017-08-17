@@ -43,6 +43,7 @@ namespace QuizzApp.DataManagement
                     var question = new Question();
                     question.Id = (long)reader["id"];
                     question.QuestionText = reader["question"].ToString();
+                    question.ImageName = reader["image"].ToString();
                     if (question.QuestionText.Equals(string.Empty))
                         continue;
                     var correctAnswer = reader["correct_answer"].ToString();
@@ -72,6 +73,7 @@ namespace QuizzApp.DataManagement
                 {
                     var question = new Question();
                     question.Id = (long)reader["id"];
+                    question.ImageName = reader["image"].ToString();
                     question.QuestionText = reader["question"].ToString();
                     question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
                     question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
@@ -99,40 +101,63 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
-        public static void SaveQuestion(Question question)
+        public static int SaveQuestion(Question question)
         {
+            int result;
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
-                    SaveQuestion(connection, question);
+                    result = SaveQuestion(connection, question);
                     transaction.Commit();
                 }
                 connection.Close();
             }
+            return result;
         }
 
-        public static void SaveQuestion(SQLiteConnection connection, Question question)
+        public static int SaveQuestion(SQLiteConnection connection, Question question)
         {
+            int result = -1;
             var command = new SQLiteCommand(connection);
+            string image = "NULL";
+            if (question.ImageName != string.Empty)
+                image = question.ImageName;
             SQLiteParameter questionCol = new SQLiteParameter("question", question.QuestionText);
+            SQLiteParameter imageParam = new SQLiteParameter("image", image);
             SQLiteParameter answer0 = new SQLiteParameter("correct", question.Answers[0]);
             SQLiteParameter answer1 = new SQLiteParameter("alt1", question.Answers[1]);
             SQLiteParameter answer2 = new SQLiteParameter("alt2", question.Answers[2]);
             SQLiteParameter answer3 = new SQLiteParameter("alt3", question.Answers[3]);
+
             if (question.Id == -1)
-                command.CommandText = "INSERT INTO multi_question VALUES(NULL, @question, @correct, @alt1, @alt2, @alt3)";
+                command.CommandText = "INSERT INTO multi_question VALUES(NULL, @question, @image, @correct, @alt1, @alt2, @alt3)";
             else
-                command.CommandText = "UPDATE multi_question SET question = @question, correct_answer = @correct, alt_answer1 = @alt1, alt_answer2 = @alt2, alt_answer3 = @alt3" +
+                command.CommandText = "UPDATE multi_question SET question = @question, image = @image, correct_answer = @correct, alt_answer1 = @alt1, alt_answer2 = @alt2, alt_answer3 = @alt3" +
                     $" WHERE id = {question.Id}";
             command.Parameters.Add(questionCol);
+            command.Parameters.Add(imageParam);
             command.Parameters.Add(answer0);
             command.Parameters.Add(answer1);
             command.Parameters.Add(answer2);
             command.Parameters.Add(answer3);
-            command.ExecuteNonQuery();
-            if (question.Id == -1) question.Id = GetQuestionId(connection, question.QuestionText);
+            result = command.ExecuteNonQuery();
+            if (question.Id == -1)
+                question.Id = GetQuestionId(connection, question.QuestionText);
+            return result;
+        }
+
+        public static long GetQuestionId(string question)
+        {
+            long result;
+            using (var connection = new SQLiteConnection(StringResources.ConnectionString))
+            {
+                connection.Open();
+                result = GetQuestionId(connection, question);
+                connection.Close();
+            }
+            return result;
         }
 
         public static long GetQuestionId(SQLiteConnection connection, string question)
@@ -150,16 +175,18 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
-        public static void DeleteQuestion(Question question)
+        public static int DeleteQuestion(Question question)
         {
+            int result = -1;
             var connection = new SQLiteConnection(StringResources.ConnectionString);
             connection.Open();
             using (var command = new SQLiteCommand("DELETE FROM multi_question WHERE id = @id", connection))
             {
                 command.Parameters.Add(new SQLiteParameter("id", question.Id));
-                command.ExecuteNonQuery();
+                result = command.ExecuteNonQuery();
             }
             connection.Close();
+            return result;
         }
 
     }

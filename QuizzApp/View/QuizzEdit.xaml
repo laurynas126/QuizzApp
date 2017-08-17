@@ -35,6 +35,7 @@
                 Width="90" Click="NewCategoryButton_Click"/>
         <Button x:Name="SaveCategoryButton" 
                 Content="Save"
+                IsEnabled="{Binding IsSelectedCategory}"
                 HorizontalAlignment="Left" 
                 VerticalContentAlignment="Center" 
                 VerticalAlignment="Top" 
@@ -69,10 +70,22 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        <!--QUESTION EDIT-->
         <TextBlock Text="Question" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="300,20,0,0" FontWeight="Bold" />
-        <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="355,20,60,0" MinWidth="235" />
-        <TextBlock Text="Correct " HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="305,50,0,0" FontWeight="Bold" />
-        <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}" HorizontalAlignment="Left" Margin="355,50,10,0" Height="150" VerticalAlignment="Top" MinWidth="235">
+        <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="355,20,60,0" MinWidth="235" ToolTip="Type Question here" />
+        <TextBlock Text="Image" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="310,45,0,0" FontWeight="Bold" />
+        <TextBox Text="{Binding SelectedQuestion.ImageName}" VerticalAlignment="Top" Margin="355,45,60,0" MinWidth="235" />
+        <Button x:Name="selectImageButton" 
+                Content="Select" 
+                Margin="0,45,10,10" 
+                Click="SelectImageClick" 
+                IsEnabled="{Binding IsSelectedQuestion}" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top" 
+                BorderThickness="0" Width="45"/>
+        <TextBlock Text="Correct " HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="305,70,0,0" FontWeight="Bold" ToolTip="Type correct answer here" />
+        <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}" Margin="355,70,60,0" Height="96" VerticalAlignment="Top" MinWidth="235">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <TextBox x:Name="answer" 
@@ -135,6 +148,6 @@
                 Click="QuitButton_Click" 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
-                BorderThickness="0"/>
+                BorderThickness="0" Width="45"/>
     </Grid>
 </Page>

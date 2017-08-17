@@ -1,4 +1,5 @@
-﻿using QuizzApp.ViewModel;
+﻿using Microsoft.Win32;
+using QuizzApp.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,6 +103,15 @@ namespace QuizzApp.View
                 vm.RemoveFromCategory();
             }
             SelectedQuestionList.Items.Refresh();
+        }
+
+        private void SelectImageClick(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditViewModel vm)
+            {
+                vm.SelectImage();
+            }
+
         }
     }
 }

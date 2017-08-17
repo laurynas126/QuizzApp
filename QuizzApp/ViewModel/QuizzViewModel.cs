@@ -8,7 +8,8 @@ using QuizzApp.Model;
 using System.Windows.Input;
 using System.ComponentModel;
 using QuizzApp.DataManagement;
-
+using QuizzApp.Utility;
+using System.Windows;
 
 namespace QuizzApp.ViewModel
 {
@@ -18,7 +19,7 @@ namespace QuizzApp.ViewModel
         private QuizzStats statistic;
         private QuestionTable _loader;
 
-        public string AppTitle => Properties.Resources.Title;
+        public string AppTitle => StringResources.Title;
         
         public Category SelectedCategory { get; set; }
 
@@ -38,6 +39,16 @@ namespace QuizzApp.ViewModel
             get {
                 if (_currentQuestion != null) return _currentQuestion.QuestionText;
                 return "Finished";
+            }
+        }
+
+        public string Image
+        {
+            get
+            {
+                if (_currentQuestion != null && _currentQuestion.ImageName != null && _currentQuestion.ImageName != string.Empty)
+                    return StringResources.ResourceFolder + "\\" + _currentQuestion.ImageName;
+                return StringResources.DefaultImage;
             }
         }
 
@@ -78,6 +89,7 @@ namespace QuizzApp.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Question"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Answers"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("QuestionNumber"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Image"));
         }
 
     }

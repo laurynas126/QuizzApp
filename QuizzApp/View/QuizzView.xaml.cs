@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using QuizzApp.ViewModel;
 using QuizzApp.Model;
+using System.Windows.Media.Animation;
 
 namespace QuizzApp.View
 {
@@ -22,6 +23,8 @@ namespace QuizzApp.View
     /// </summary>
     public partial class QuizzView : Page
     {
+        private Storyboard myStoryboard;
+
         public QuizzView(object dataContext)
         {
             InitializeComponent();
@@ -46,6 +49,7 @@ namespace QuizzApp.View
             if (isCorrect)
             {
                 CorrectButton(button);
+                FadeObject(CorrectText);
             }
             else
             {
@@ -53,6 +57,31 @@ namespace QuizzApp.View
             }
             continueButton.Visibility = Visibility.Visible;
             itemControl.IsEnabled = false;
+        }
+
+        private void FadeObject(TextBlock element)
+        {
+            DoubleAnimation doubleAnim = new DoubleAnimation();
+            doubleAnim.From = 0.0;
+            doubleAnim.To = 1.0;
+            doubleAnim.Duration = new Duration(TimeSpan.FromSeconds(1));
+            doubleAnim.AutoReverse = false;
+            doubleAnim.AccelerationRatio = 0.6;
+            doubleAnim.DecelerationRatio = 0.4;
+
+            var staticAnim = new DoubleAnimation(1.0, 0.0, new Duration(TimeSpan.FromSeconds(1)));
+            staticAnim.BeginTime = TimeSpan.FromSeconds(3);
+
+            myStoryboard = new Storyboard();
+            myStoryboard.Children.Add(doubleAnim);
+            myStoryboard.Children.Add(staticAnim);
+
+            Storyboard.SetTarget(doubleAnim, element);
+            Storyboard.SetTarget(staticAnim, element);
+            Storyboard.SetTargetProperty(doubleAnim, new PropertyPath(TextBlock.OpacityProperty));
+            Storyboard.SetTargetProperty(staticAnim, new PropertyPath(TextBlock.OpacityProperty));
+            myStoryboard.Begin();
+
         }
         private void IncorrectButton(Button button)
         {
@@ -70,7 +99,19 @@ namespace QuizzApp.View
         }
         private void CorrectButton(Button button)
         {
-            button.Background = new SolidColorBrush(Colors.LimeGreen);
+            var value = button.Background as SolidColorBrush;
+            SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
+            button.Background = brush;
+            ColorAnimation animation = new ColorAnimation(value.Color, Colors.LimeGreen, TimeSpan.FromSeconds(0.8));
+            animation.AccelerationRatio = 0.8;
+            animation.DecelerationRatio = 0.2;
+            myStoryboard = new Storyboard();
+            myStoryboard.Children.Add(animation);
+
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            //myStoryboard.Begin();
+
+            //button.Background = new SolidColorBrush(Colors.LimeGreen);
         }
 
         private static T FindVisualChild<T>(DependencyObject depObj) where T : DependencyObject

@@ -71,6 +71,8 @@ namespace QuizzApp.DataManagement
 
         public static void SaveCategory(SQLiteConnection connection, Category category)
         {
+            if (category == null)
+                return;
             var command = new SQLiteCommand(connection);
             SQLiteParameter param = new SQLiteParameter("title", category.Title);
             if (category.Id == -1)

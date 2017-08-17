@@ -11,6 +11,7 @@ namespace QuizzApp.Model
         public long Id { get; set; } = -1;
         public string QuestionText { get; set; }
         public List<Answer> Answers { get; }
+        public string ImageName { get; set; }
 
         public Question()
         {

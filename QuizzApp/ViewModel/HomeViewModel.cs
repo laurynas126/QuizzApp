@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using QuizzApp.DataManagement;
 using QuizzApp.Utility;
+using System.Windows;
+using System.IO;
 
 namespace QuizzApp.ViewModel
 {
@@ -19,9 +21,21 @@ namespace QuizzApp.ViewModel
         public HomeViewModel()
         {
             var loader = new CategoryTable();
+            InitDirectory();
             LoadNumbers();
             LoadCategories(loader);
             TotalCount = loader.GetTotalCount() + " Questions in total";
+        }
+
+        private void InitDirectory()
+        {
+            if (!Directory.Exists(StringResources.ResourceFolder))
+                Directory.CreateDirectory(StringResources.ResourceFolder);
+            if (!File.Exists(StringResources.DbFile))
+            {
+                MessageBox.Show("DB File not found: " + StringResources.DbFile, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(404);
+            }
         }
 
         private void LoadNumbers()
@@ -34,17 +48,6 @@ namespace QuizzApp.ViewModel
 
         private void LoadCategories(CategoryTable loader)
         {
-            //var cqt = new CategoryQuestionTable();
-            //var category = new Category("CAT1");
-            //var catTable = new CategoryTable();
-            //catTable.SaveCategory(category);
-            //var question = new Question("TESTQ1", new string[] { "A", "B", "C", "D" });
-            //var qTable = new QuestionTable();
-            //qTable.AddQuestion(question);
-            //cqt.AddCategoryQuestions(category, new List<Question>() { question, question2 });
-            //var question2 = new Question("TESTQ2", new string[] { "AA", "BB", "CC", "DD" });
-
-
             CategoryList = CategoryTable.GetAllCategories();
             CategoryList.Insert(0, new Category(0, "All"));
         }

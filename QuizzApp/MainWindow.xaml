@@ -7,7 +7,7 @@
         xmlns:util="clr-namespace:QuizzApp.Utility"
         mc:Ignorable="d"
         Title="{Binding Source={x:Static util:StringResources.Title}}" Height="500" Width="700"
-         MinWidth="700" MinHeight="500" UseLayoutRounding="False" WindowStartupLocation="CenterScreen">
+         MinWidth="800" MinHeight="650" UseLayoutRounding="False" WindowStartupLocation="CenterScreen">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF0074FF"/>

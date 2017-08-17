@@ -3,7 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="DBFile" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">C:\Users\Laurynas\Documents\Visual Studio 2017\Projects\quizz.db</Value>
+      <Value Profile="(Default)">quizz.db</Value>
+    </Setting>
+    <Setting Name="DefaultImage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">questionIcon.png</Value>
+    </Setting>
+    <Setting Name="ResourceFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Quizz</Value>
     </Setting>
   </Settings>
 </SettingsFile>
