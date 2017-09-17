@@ -111,6 +111,12 @@ namespace QuizzApp.ViewModel
             SelectedQuestion = new Question("", new string[] { "", "", "", "" });
         }
 
+        public void NewTextQuestion()
+        {
+            SelectedQuestion = new Question("", new string[] { "" });
+            SelectedQuestion.IsFreeText = true;
+        }
+
         public void SaveQuestion()
         {
             try
@@ -120,6 +126,7 @@ namespace QuizzApp.ViewModel
                 if (!_questions.Contains(SelectedQuestion))
                     _questions.Add(SelectedQuestion);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
             }
             catch (SQLiteException ex)
             {

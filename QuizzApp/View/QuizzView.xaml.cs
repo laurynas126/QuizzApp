@@ -33,8 +33,14 @@ namespace QuizzApp.View
 
         private void QuitButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Are you sure you want to quit?", "Quit", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result.HasFlag(MessageBoxResult.No)) return;
+            if (this.DataContext is QuizzViewModel context)
+            {
+                if (!context.IsFinished)
+                {
+                    var result = MessageBox.Show("Are you sure you want to quit?", "Quit", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result.HasFlag(MessageBoxResult.No)) return;
+                }
+            }
             this.NavigationService.GoBack();
         }
 
@@ -48,7 +54,7 @@ namespace QuizzApp.View
             }
             if (isCorrect)
             {
-                CorrectButton(button);
+                AnimateColorTransition(button, Colors.LimeGreen);
                 FadeObject(CorrectText);
             }
             else
@@ -93,24 +99,22 @@ namespace QuizzApp.View
                 if (buttonAnswer.Correct)
                 {
                     UIElement uiElement = (UIElement)itemControl.ItemContainerGenerator.ContainerFromItem(item);
-                    CorrectButton(FindVisualChild<Button>(uiElement));
+                    AnimateColorTransition(FindVisualChild<Button>(uiElement), Colors.LimeGreen);
                 }
             }
         }
-        private void CorrectButton(Button button)
+        private void AnimateColorTransition(Control element, Color toColor)
         {
-            var value = button.Background as SolidColorBrush;
+            var value = element.Background as SolidColorBrush;
             SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
-            button.Background = brush;
-            ColorAnimation animation = new ColorAnimation(value.Color, Colors.LimeGreen, TimeSpan.FromSeconds(0.8));
+            element.Background = brush;
+            ColorAnimation animation = new ColorAnimation(value.Color, toColor, TimeSpan.FromSeconds(0.8));
             animation.AccelerationRatio = 0.8;
             animation.DecelerationRatio = 0.2;
             myStoryboard = new Storyboard();
             myStoryboard.Children.Add(animation);
 
             brush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-            //myStoryboard.Begin();
-
             //button.Background = new SolidColorBrush(Colors.LimeGreen);
         }
 
@@ -137,6 +141,15 @@ namespace QuizzApp.View
             if (this.DataContext is QuizzViewModel context)
             {
                 context.NextQuestion();
+                if (context.IsFinished)
+                {
+                    returnButton.Visibility = Visibility.Visible;
+                }
+                else if (context.IsTextQuestion)
+                {
+                    ResetInputBox(textQuestionInputBox);
+                    SubmitInputButton.IsEnabled = true;
+                }
             }
             itemControl.IsEnabled = true;
         }
@@ -145,6 +158,43 @@ namespace QuizzApp.View
         {
             if(sender != null)
                 sender.Visibility = Visibility.Hidden;
+        }
+
+        private void SubmitInputButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool IsCorrect = false;
+
+            if (textQuestionInputBox.Text.Trim() == string.Empty)
+            {
+                MessageBox.Show("Enter your answer into the text field");
+                return;
+            }
+            if (sender is Button b)
+            {
+                b.IsEnabled = false;
+            }
+            if (this.DataContext is QuizzViewModel context)
+            {
+                IsCorrect = context.SubmitTextAnswer(textQuestionInputBox.Text);
+            }
+            if (IsCorrect)
+            {
+                FadeObject(CorrectText);
+                AnimateColorTransition(textQuestionInputBox, Colors.LimeGreen);
+            }
+            else
+            {
+                AnimateColorTransition(textQuestionInputBox, Colors.IndianRed);
+                textQuestionInputBox.Foreground = new SolidColorBrush(Colors.White);
+            }
+            continueButton.Visibility = Visibility.Visible;
+        }
+
+        private void ResetInputBox(TextBox box)
+        {
+            box.Text = string.Empty;
+            box.Background = new SolidColorBrush(Colors.White);
+            box.Foreground = new SolidColorBrush(Colors.Black);
         }
     }
 }

@@ -55,6 +55,16 @@ namespace QuizzApp.DataManagement.Tests
         }
 
         [TestMethod()]
+        public void SaveQuestionTest_FreeTextType()
+        {
+            Question question = new Question("Free Type", new string[] { "A;B;C;D" });
+            question.IsFreeText = true;
+            int res = QuestionTable.SaveQuestion(question);
+            QuestionTable.DeleteQuestion(question);
+            Assert.AreEqual(res, 1);
+        }
+
+        [TestMethod()]
         public void SaveQuestionTest_Modify()
         {
             string temp = defaultQuestion.QuestionText;
@@ -73,7 +83,7 @@ namespace QuizzApp.DataManagement.Tests
             QuestionTable.SaveQuestion(defaultQuestion);
             defaultQuestion.QuestionText = "MODIFIED QUESTION";
             QuestionTable.SaveQuestion(defaultQuestion);
-            long id = QuestionTable.GetQuestionId(defaultQuestion.QuestionText);
+            long id = QuestionTable.GetQuestionId(defaultQuestion);
             defaultQuestion.QuestionText = temp;
 
             Assert.AreNotEqual(id, -1);
@@ -83,7 +93,7 @@ namespace QuizzApp.DataManagement.Tests
         public void GetQuestionIdTest_Exists()
         {
             QuestionTable.SaveQuestion(defaultQuestion);
-            long res = QuestionTable.GetQuestionId(defaultQuestion.QuestionText);
+            long res = QuestionTable.GetQuestionId(defaultQuestion);
 
             Assert.AreNotEqual(-1, res);
         }
@@ -93,7 +103,7 @@ namespace QuizzApp.DataManagement.Tests
         {
             QuestionTable.SaveQuestion(defaultQuestion);
             QuestionTable.DeleteQuestion(defaultQuestion);
-            long res = QuestionTable.GetQuestionId(defaultQuestion.QuestionText);
+            long res = QuestionTable.GetQuestionId(defaultQuestion);
 
             Assert.AreEqual(-1, res);
         }
