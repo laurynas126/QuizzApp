@@ -11,7 +11,10 @@
     <Page.Resources>
         <ControlTemplate x:Key="SimpleButtonControlResource" TargetType="{x:Type Button}">
 
-            <Border CornerRadius="3" x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <Border CornerRadius="3" x:Name="Border" 
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="{TemplateBinding BorderThickness}" 
+                    Background="{TemplateBinding Background}">
                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}" />
             </Border>
             <ControlTemplate.Triggers>
@@ -23,56 +26,99 @@
     </Page.Resources>
 
     <Grid>
-        <Label Content="{Binding AppTitle}" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Roboto Medium" FontSize="24"/>
+        <Label Content="{Binding AppTitle}" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Roboto Medium" FontSize="20"/>
+        <Label x:Name="label" Content="{Binding SelectedCategory.Title}" HorizontalAlignment="Center" Margin="0,28,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Roboto Medium" FontSize="24"/>
+        <Rectangle HorizontalAlignment="Center" Margin="0,-5,0,0" VerticalAlignment="Top" Fill="#4CFFFFFF" Width="{Binding ActualWidth, ElementName=label, Mode=OneWay}" Height="67" RadiusX="4" RadiusY="4" Panel.ZIndex="-99" MinWidth="140" />
         <Rectangle HorizontalAlignment="Left" Margin="-5,60,60,272" VerticalAlignment="Top" Fill="#4CFFFFFF" Width="160" Height="50" RadiusX="4" RadiusY="4" />
         <TextBlock HorizontalAlignment="Left" Margin="50,65,50,290" VerticalAlignment="Top" FontFamily="Roboto" FontSize="18" Text="{Binding QuestionNumber}"/>
         <TextBlock HorizontalAlignment="Left" Margin="50,85,50,255" VerticalAlignment="Top" FontFamily="Roboto" FontSize="18" Text="{Binding CorrectAnswered}"/>
         <TextBlock x:Name="QuestionText" Text="{Binding Question}" HorizontalAlignment="Center" Margin="0,110,0,0" VerticalAlignment="Top" FontFamily="Roboto Medium" FontSize="28" TextWrapping="WrapWithOverflow" Padding="10" TextAlignment="Center" ToolTip=""/>
-        <Image Source="{Binding Image}" Margin="20,170,20,120" Panel.ZIndex="-10" RenderTransformOrigin="0.5,0.5"/>
+        <Image x:Name="image" Source="{Binding Image}" 
+               Margin="20,170,20,115" 
+               Panel.ZIndex="-10" 
+               RenderTransformOrigin="0.5,0.5">
+            <Image.Effect>
+                <DropShadowEffect BlurRadius="5" Direction="0" ShadowDepth="0"/>
+            </Image.Effect>
+        </Image>
 
         <TextBlock x:Name="CorrectText" HorizontalAlignment="Center" Margin="0,250,0,0" VerticalAlignment="Center" FontFamily="Roboto" FontSize="48" Text="CORRECT" FontWeight="Bold" Opacity="0" Foreground="#FF00FF23">
             <TextBlock.Effect>
                 <DropShadowEffect Opacity="0.9" ShadowDepth="1"/>
             </TextBlock.Effect>
         </TextBlock>
-        <ItemsControl x:Name="itemControl" ItemsSource="{Binding Answers}">
+
+        <!--CHOICE QUESTION-->
+        <ItemsControl x:Name="itemControl" ItemsSource="{Binding Answers}" Visibility="{Binding ShowChoices}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Margin="50,300,50,35" VerticalAlignment="Bottom" Columns="2" Rows="2"/>
+                    <UniformGrid Margin="50,300,50,30" VerticalAlignment="Bottom" Columns="2" Rows="2"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button x:Name="answerButton" 
-                            Content="{Binding}" 
+                            Content="{Binding}"
+                            Template="{DynamicResource SimpleButtonControlResource}"
+                            Background="White"
                             VerticalContentAlignment="Center" 
                             HorizontalAlignment="Stretch" 
                             Margin="5" 
                             FontFamily="Roboto"
-                            Background="White"
-                            FontSize="16"
-                            Click="AnswerButtonClick" HorizontalContentAlignment="Center" Height="30" FontWeight="Normal" Template="{DynamicResource SimpleButtonControlResource}"/>
+                            FontSize="18"
+                            Click="AnswerButtonClick" 
+                            HorizontalContentAlignment="Center" Height="30" FontWeight="Normal" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Rectangle Margin="50,280,50,-5" Fill="#4CFFFFFF" RadiusX="4" RadiusY="4" Panel.ZIndex="-10" VerticalAlignment="Bottom" Height="120" />
+
+        <TextBox x:Name="textQuestionInputBox" Margin="55,280,55,75" VerticalAlignment="Bottom" FontSize="18"
+                 Visibility="{Binding ShowInput}" HorizontalContentAlignment="Center"/>
+
+        <Button x:Name="SubmitInputButton" 
+                Content="Submit"
+                Template="{DynamicResource SimpleButtonControlResource}" 
+                Background="White"
+                Visibility="{Binding ShowInput}" 
+                Margin="60,280,60,42" 
+                VerticalAlignment="Bottom" 
+                HorizontalAlignment="Center" 
+                FontSize="18" Click="SubmitInputButton_Click" IsDefault="True"/>
+        <Rectangle Margin="50,280,50,-5" Fill="#4CFFFFFF" RadiusX="4" RadiusY="4" Panel.ZIndex="-10" VerticalAlignment="Bottom" Height="115" />
+
 
         <Button x:Name="continueButton" 
                 Content="Next" 
+                Template="{DynamicResource SimpleButtonControlResource}" 
+                Background="White"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Bottom"
-                Margin="0,0,0,5"           
+                Margin="0,0,0,3"
                 FontSize="18"
-                Visibility="Hidden" Click="ContinueButton_Click" Template="{DynamicResource SimpleButtonControlResource}" Padding="20,1">
+                Visibility="Hidden" 
+                Click="ContinueButton_Click" 
+                Padding="20,1" IsDefault="True">
         </Button>
 
-        <Button x:Name="quitButton" 
+        <Button x:Name="quitButton"
                 Content="Quit" 
-                Margin="10,10,0,0" 
+                Template="{DynamicResource SimpleButtonControlResource}"
+                Background="White"
+                Margin="10,10,0,0"                
                 Click="QuitButton_Click" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
-                BorderThickness="0" Width="36"/>
+                BorderThickness="0" Width="42" IsCancel="True"/>
+
+        <Button x:Name="returnButton"
+                Content="Return Home" 
+                Template="{DynamicResource SimpleButtonControlResource}"
+                Background="White"
+                Click="QuitButton_Click" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Bottom"
+                Visibility="Hidden"
+                Margin="0,0,0,10" FontSize="18" Padding="10,1"/>
 
     </Grid>
 </Page>

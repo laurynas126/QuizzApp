@@ -12,6 +12,8 @@ namespace QuizzApp.Utility
         public static string SaveFileToResourceFolder(string originalFile)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(StringResources.ResourceFolder);
+            if (File.Exists(StringResources.ResourceFolder + "\\" + originalFile))
+                return originalFile;
             if (!File.Exists(originalFile))
                 return null;
             FileInfo file = new FileInfo(originalFile);
@@ -24,9 +26,11 @@ namespace QuizzApp.Utility
                     var length = new FileInfo(StringResources.ResourceFolder + "\\" + fileName).Length;
                     if (file.Length == length)
                         return file.Name;
-                    fileName = file.Name + $"({count++})";
+
+                    fileName = file.Name.Replace(file.Extension, "") + $"({count++})" + file.Extension;
                 }
                 file.CopyTo(StringResources.ResourceFolder + "\\" + fileName);
+                return fileName;
             }
             return file.Name;
         }

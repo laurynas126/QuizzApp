@@ -24,7 +24,7 @@ namespace QuizzApp.DataManagement
             {
                 connection.Open();
                 var command = new SQLiteCommand(connection);
-                command.CommandText = "SELECT * FROM category;";
+                command.CommandText = "SELECT * FROM category ORDER BY title;";
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {

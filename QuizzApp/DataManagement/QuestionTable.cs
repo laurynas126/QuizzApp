@@ -30,7 +30,15 @@ namespace QuizzApp.DataManagement
             return null;
         }
 
-        public void LoadMultiQuestionsByCategory(long category=0)
+        public static void LoadQuestionAnswers(SQLiteDataReader reader, Question question)
+        {
+            question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
+            question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
+            question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
+            question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
+        }
+
+        public void LoadQuestionsByCategory(long category=0)
         {
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
@@ -43,17 +51,26 @@ namespace QuizzApp.DataManagement
                     var question = new Question();
                     question.Id = (long)reader["id"];
                     question.QuestionText = reader["question"].ToString();
-                    question.ImageName = reader["image"].ToString();
                     if (question.QuestionText.Equals(string.Empty))
                         continue;
+                    question.ImageName = reader["image"].ToString();
+
                     var correctAnswer = reader["correct_answer"].ToString();
                     if (correctAnswer.Equals(string.Empty))
                         continue;
-                    question.Answers.Add(new Answer(correctAnswer, true));
-                    question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
-                    question.Answers.Shuffle();
+                    int.TryParse(reader["is_free_text"].ToString(), out int isFreeText);
+                    if (isFreeText == 0)
+                    {
+                        LoadQuestionAnswers(reader, question);
+
+                        question.Answers.Shuffle();
+                        question.IsFreeText = false;
+                    }
+                    else
+                    {
+                        question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
+                        question.IsFreeText = true;
+                    }
                     questionList.Add(question);
                 }
                 connection.Close();
@@ -75,10 +92,18 @@ namespace QuizzApp.DataManagement
                     question.Id = (long)reader["id"];
                     question.ImageName = reader["image"].ToString();
                     question.QuestionText = reader["question"].ToString();
-                    question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
-                    question.Answers.Add(new Answer(reader["alt_answer1"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer2"].ToString(), false));
-                    question.Answers.Add(new Answer(reader["alt_answer3"].ToString(), false));
+                    int.TryParse(reader["is_free_text"].ToString(), out int isFreeText);
+                    if (isFreeText == 0)
+                    {
+                        question.IsFreeText = false;
+                        LoadQuestionAnswers(reader, question);
+
+                    }
+                    else
+                    {
+                        question.IsFreeText = true;
+                        question.Answers.Add(new Answer(reader["correct_answer"].ToString(), true));
+                    }
                     questions.Add(question);
                 }
                 connection.Close();
@@ -117,6 +142,36 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
+        public static int BoolToInt(bool value)
+        {
+            if (value) return 1;
+            return 0;
+        }
+
+        public static void AddAnswerParameters(SQLiteCommand command, Question question)
+        {
+            SQLiteParameter answer0 = new SQLiteParameter("correct", question.Answers[0]);
+            SQLiteParameter answer1;
+            SQLiteParameter answer2;
+            SQLiteParameter answer3;
+            if (question.IsFreeText || question.Answers.Count <= 1)
+            {
+                answer1 = new SQLiteParameter("alt1", null);
+                answer2 = new SQLiteParameter("alt2", null);
+                answer3 = new SQLiteParameter("alt3", null);
+            }
+            else
+            {
+                answer1 = new SQLiteParameter("alt1", question.Answers[1].Text);
+                answer2 = new SQLiteParameter("alt2", question.Answers[2].Text);
+                answer3 = new SQLiteParameter("alt3", question.Answers[3].Text);
+            }
+            command.Parameters.Add(answer0);
+            command.Parameters.Add(answer1);
+            command.Parameters.Add(answer2);
+            command.Parameters.Add(answer3);
+        }
+
         public static int SaveQuestion(SQLiteConnection connection, Question question)
         {
             int result = -1;
@@ -126,29 +181,25 @@ namespace QuizzApp.DataManagement
                 image = question.ImageName;
             SQLiteParameter questionCol = new SQLiteParameter("question", question.QuestionText);
             SQLiteParameter imageParam = new SQLiteParameter("image", image);
-            SQLiteParameter answer0 = new SQLiteParameter("correct", question.Answers[0]);
-            SQLiteParameter answer1 = new SQLiteParameter("alt1", question.Answers[1]);
-            SQLiteParameter answer2 = new SQLiteParameter("alt2", question.Answers[2]);
-            SQLiteParameter answer3 = new SQLiteParameter("alt3", question.Answers[3]);
+            SQLiteParameter isFree = new SQLiteParameter("isFree", BoolToInt(question.IsFreeText));
+            AddAnswerParameters(command, question);
 
             if (question.Id == -1)
-                command.CommandText = "INSERT INTO multi_question VALUES(NULL, @question, @image, @correct, @alt1, @alt2, @alt3)";
+                command.CommandText = "INSERT INTO multi_question VALUES(NULL, @isFree, @question, @image, @correct, @alt1, @alt2, @alt3)";
             else
-                command.CommandText = "UPDATE multi_question SET question = @question, image = @image, correct_answer = @correct, alt_answer1 = @alt1, alt_answer2 = @alt2, alt_answer3 = @alt3" +
+                command.CommandText = "UPDATE multi_question SET question = @question, is_free_text = @isFree, image = @image, correct_answer = @correct, alt_answer1 = @alt1, alt_answer2 = @alt2, alt_answer3 = @alt3" +
                     $" WHERE id = {question.Id}";
             command.Parameters.Add(questionCol);
             command.Parameters.Add(imageParam);
-            command.Parameters.Add(answer0);
-            command.Parameters.Add(answer1);
-            command.Parameters.Add(answer2);
-            command.Parameters.Add(answer3);
+            command.Parameters.Add(isFree);
+
             result = command.ExecuteNonQuery();
             if (question.Id == -1)
-                question.Id = GetQuestionId(connection, question.QuestionText);
+                question.Id = GetQuestionId(connection, question);
             return result;
         }
 
-        public static long GetQuestionId(string question)
+        public static long GetQuestionId(Question question)
         {
             long result;
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
@@ -160,12 +211,14 @@ namespace QuizzApp.DataManagement
             return result;
         }
 
-        public static long GetQuestionId(SQLiteConnection connection, string question)
+        public static long GetQuestionId(SQLiteConnection connection, Question question)
         {
             long result = -1;
-            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question", connection))
+            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question AND image = @image AND correct_answer = @answer", connection))
             {
-                command.Parameters.Add(new SQLiteParameter("question", question));
+                command.Parameters.Add(new SQLiteParameter("question", question.QuestionText));
+                command.Parameters.Add(new SQLiteParameter("image", question.ImageName));
+                command.Parameters.Add(new SQLiteParameter("answer", question.Answers[0]));
                 var resultQuerry = command.ExecuteScalar();
                 if (resultQuerry != null)
                 {

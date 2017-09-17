@@ -54,7 +54,7 @@
         <TextBox Text="{Binding SelectedCategory.Title}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="75,195,0,0" Width="215" />
         <ListView x:Name="SelectedQuestionList"
                   ItemsSource="{Binding SelectedCategory.Questions}"
-                  SelectedItem="{Binding SelectedQuestion}" Margin="20,215,360,10" MinWidth="270" HorizontalAlignment="Left">
+                  SelectedItem="{Binding SelectedQuestion}" Margin="20,215,360,10" MinWidth="270" HorizontalAlignment="Left" MaxWidth="270">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Questions" Width="260" DisplayMemberBinding="{Binding QuestionText}" />
@@ -67,10 +67,11 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Questions" Width="{Binding Path=AllQuestionList, ElementName=Width}" DisplayMemberBinding="{Binding QuestionText}" />
+                    <GridViewColumn Header="Correct" DisplayMemberBinding="{Binding CorrectAnswer}" />
                 </GridView>
             </ListView.View>
         </ListView>
-        
+
         <!--QUESTION EDIT-->
         <TextBlock Text="Question" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="300,20,0,0" FontWeight="Bold" />
         <TextBox Text="{Binding SelectedQuestion.QuestionText}" VerticalAlignment="Top" Margin="355,20,60,0" MinWidth="235" ToolTip="Type Question here" />
@@ -96,8 +97,11 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <CheckBox VerticalAlignment="Top" Margin="355,25,65,0" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Content="Free text"
+                  ToolTip="Check to make this question free text input type"
+                  IsChecked="False" IsEnabled="False" Visibility="Hidden"/>
 
-        
+
         <Button  x:Name="NewQuestionButton"
                  Content="New Question" 
                  HorizontalAlignment="Left" 
@@ -105,13 +109,21 @@
                  Margin="340,170,0,10" 
                  VerticalContentAlignment="Center" Click="NewQuestionButton_Click" Width="90">
         </Button>
+        
+        <Button  x:Name="NewFreeQuestionButton"
+                 Content="New Text Question" 
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Top" 
+                 Margin="429,170,0,10" 
+                 VerticalContentAlignment="Center" Click="NewFreeQuestionButton_Click" FontStretch="SemiCondensed" FontSize="11" Height="22"/>
+
         <Button  x:Name="SaveQuestionButton"
                  Content="Save"
                  IsEnabled="{Binding IsSelectedQuestion}"           
                  HorizontalAlignment="Left" 
                  VerticalAlignment="Top" 
-                 Margin="430,170,0,10" 
-                 VerticalContentAlignment="Center" Click="SaveQuestionButton_Click" Width="90">
+                 Margin="526,170,0,10" 
+                 VerticalContentAlignment="Center" Click="SaveQuestionButton_Click" Width="60">
         </Button>
         <Button  x:Name="DeleteQuestionButton"
                  Content="Delete" 
@@ -143,7 +155,7 @@
 
 
         <Button x:Name="quitButton" 
-                Content="Return" 
+                Content="Quit" 
                 Margin="0,20,10,10" 
                 Click="QuitButton_Click" 
                 HorizontalAlignment="Right" 

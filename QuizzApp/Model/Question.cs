@@ -10,8 +10,18 @@ namespace QuizzApp.Model
     {
         public long Id { get; set; } = -1;
         public string QuestionText { get; set; }
+        public bool IsFreeText { get; set; }
         public List<Answer> Answers { get; }
         public string ImageName { get; set; }
+
+        public string CorrectAnswer
+        {
+            get
+            {
+                if (Answers.Count >= 1) return Answers[0].Text;
+                return null;
+            }
+        }
 
         public Question()
         {
@@ -27,7 +37,7 @@ namespace QuizzApp.Model
         public Question(string question, string[] answers) : this()
         {
             QuestionText = question;
-            if (answers.Length < 2)
+            if (answers == null || answers.Length == 0)
             {
                 return;
             }
@@ -42,7 +52,8 @@ namespace QuizzApp.Model
         {
             if (obj is Question q)
             {
-                return q.Id == this.Id;
+                //return q.Id == this.Id;
+                return q.QuestionText == this.QuestionText && q.ImageName == this.ImageName && q.Answers[0].Text == this.Answers[0].Text;
             }
             return false;
         }

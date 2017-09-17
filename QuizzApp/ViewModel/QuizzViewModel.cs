@@ -10,6 +10,7 @@ using System.ComponentModel;
 using QuizzApp.DataManagement;
 using QuizzApp.Utility;
 using System.Windows;
+using System.Text.RegularExpressions;
 
 namespace QuizzApp.ViewModel
 {
@@ -29,7 +30,7 @@ namespace QuizzApp.ViewModel
         {
             SelectedCategory = category;
             _loader = new QuestionTable(questionNumber);
-            _loader.LoadMultiQuestionsByCategory(SelectedCategory.Id);
+            _loader.LoadQuestionsByCategory(SelectedCategory.Id);
             statistic = new QuizzStats();
             this.NextQuestion();
         }
@@ -39,6 +40,27 @@ namespace QuizzApp.ViewModel
             get {
                 if (_currentQuestion != null) return _currentQuestion.QuestionText;
                 return "Finished";
+            }
+        }
+
+        public bool IsFinished => _currentQuestion == null;
+        public bool IsTextQuestion => _currentQuestion.IsFreeText;
+
+        public Visibility ShowChoices
+        {
+            get
+            {
+                if (_currentQuestion == null || _currentQuestion.IsFreeText) return Visibility.Hidden;
+                return Visibility.Visible;
+            }
+        }
+
+        public Visibility ShowInput
+        {
+            get
+            {
+                if (_currentQuestion == null || !_currentQuestion.IsFreeText) return Visibility.Hidden;
+                return Visibility.Visible;
             }
         }
 
@@ -79,6 +101,20 @@ namespace QuizzApp.ViewModel
             return false;
         }
 
+        public bool SubmitTextAnswer(string answer)
+        {
+            if (_currentQuestion == null || !_currentQuestion.IsFreeText)
+                return false;
+            var values = _currentQuestion.Answers[0].Text.Split(';').Select(value => value.Trim().ToLower()).Where(value => value != string.Empty);
+            if (values.Contains(answer.ToLower().Trim()))
+            {
+                statistic.CorrectAnswered++;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CorrectAnswered"));
+                return true;
+            }
+            return false;
+        }
+
         public void NextQuestion()
         {
             _currentQuestion = _loader.GetNextQuestion();
@@ -90,6 +126,8 @@ namespace QuizzApp.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Answers"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("QuestionNumber"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Image"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ShowChoices"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ShowInput"));
         }
 
     }

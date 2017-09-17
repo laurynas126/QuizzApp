@@ -70,6 +70,14 @@ namespace QuizzApp.View
             }
         }
 
+        private void NewFreeQuestionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is EditViewModel vm)
+            {
+                vm.NewTextQuestion();
+            }
+        }
+
         private void SaveQuestionButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is EditViewModel vm)
@@ -113,5 +121,7 @@ namespace QuizzApp.View
             }
 
         }
+
+
     }
 }
