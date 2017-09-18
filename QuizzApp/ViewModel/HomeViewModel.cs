@@ -33,9 +33,19 @@ namespace QuizzApp.ViewModel
                 Directory.CreateDirectory(StringResources.ResourceFolder);
             if (!File.Exists(StringResources.DbFile))
             {
-                MessageBox.Show("DB File not found: " + StringResources.DbFile, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(404);
+                InitDatabase();
             }
+        }
+
+        private void InitDatabase()
+        {
+            DatabaseCreator.CreateQuizzDatabase(StringResources.DbFile);
+            var demo = new Category("Demo");
+            var question = new Question("Demo question", new string[] { "Correct answer", "Alternative 1", "Alternative 2", "Alternative 3" });
+            var textQuestion = new Question("This is text question", new string[] { "Accepted answer;separate;correct;answers;by;semicolon" });
+            textQuestion.IsFreeText = true;
+            QuestionTable.SaveQuestion(textQuestion);
+            CategoryQuestionTable.AddCategoryQuestion(demo, question);
         }
 
         private void LoadNumbers()

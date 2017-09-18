@@ -16,5 +16,9 @@ namespace QuizzApp.Utility
         public static string DuplicateQuestionError { get; } = "Question with this name already exists";
         public static string Title => Properties.Resources.Title;
         public static string DefaultImage { get; } = AppDir + "\\" + QuizzApp.Properties.Settings.Default.DefaultImage;
+
+        public static string CreateCategoryTable => "CREATE TABLE \"category\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL UNIQUE )";
+        public static string CreateQuestionTable => "CREATE TABLE \"multi_question\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `is_free_text` INTEGER, `question` TEXT NOT NULL, `image` TEXT, `correct_answer` TEXT NOT NULL, `alt_answer1` TEXT, `alt_answer2` TEXT, `alt_answer3` TEXT )";
+        public static string CreateCategoryQuestionTable => "CREATE TABLE \"category_question\" ( `categoryID` INTEGER NOT NULL, `questionID` INTEGER NOT NULL, FOREIGN KEY(`categoryID`) REFERENCES `category`(`id`), FOREIGN KEY(`questionID`) REFERENCES `multi_question`(`id`) )";
     }
 }

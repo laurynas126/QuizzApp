@@ -132,11 +132,7 @@ namespace QuizzApp.DataManagement
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
             {
                 connection.Open();
-                using (var transaction = connection.BeginTransaction())
-                {
-                    result = SaveQuestion(connection, question);
-                    transaction.Commit();
-                }
+                result = SaveQuestion(connection, question);
                 connection.Close();
             }
             return result;
@@ -214,10 +210,9 @@ namespace QuizzApp.DataManagement
         public static long GetQuestionId(SQLiteConnection connection, Question question)
         {
             long result = -1;
-            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question AND image = @image AND correct_answer = @answer", connection))
+            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question AND correct_answer = @answer", connection))
             {
                 command.Parameters.Add(new SQLiteParameter("question", question.QuestionText));
-                command.Parameters.Add(new SQLiteParameter("image", question.ImageName));
                 command.Parameters.Add(new SQLiteParameter("answer", question.Answers[0]));
                 var resultQuerry = command.ExecuteScalar();
                 if (resultQuerry != null)

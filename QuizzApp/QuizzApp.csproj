@@ -92,6 +92,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataManagement\CategoryQuestionTable.cs" />
+    <Compile Include="DataManagement\DatabaseCreator.cs" />
     <Compile Include="Model\Answer.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="DataManagement\CategoryTable.cs" />
