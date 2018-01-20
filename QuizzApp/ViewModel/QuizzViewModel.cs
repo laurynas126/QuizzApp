@@ -115,6 +115,8 @@ namespace QuizzApp.ViewModel
             return false;
         }
 
+        public string CorrectAnswer => _currentQuestion.Answers[0].Text.Split(';').Select(value => value.Trim()).Where(value => value != string.Empty).First();
+
         public void NextQuestion()
         {
             _currentQuestion = _loader.GetNextQuestion();

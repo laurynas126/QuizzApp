@@ -72,6 +72,9 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <!--TEXT QUESTION-->
+        <TextBlock x:Name="textAnswer" Margin="55,280,55,120" VerticalAlignment="Bottom" FontSize="18"
+                 Visibility="Hidden" Background="LimeGreen" FontWeight="Bold" TextAlignment="Center" HorizontalAlignment="Center" Padding="20,5"/>
         <TextBox x:Name="textQuestionInputBox" Margin="55,280,55,75" VerticalAlignment="Bottom" FontSize="18"
                  Visibility="{Binding ShowInput}" HorizontalContentAlignment="Center"/>
 

@@ -54,7 +54,8 @@ namespace QuizzApp.View
             }
             if (isCorrect)
             {
-                AnimateColorTransition(button, Colors.LimeGreen);
+                //AnimateColorTransition(button, Colors.LimeGreen);
+                button.Background = new SolidColorBrush(Colors.LimeGreen);
                 FadeObject(CorrectText);
             }
             else
@@ -70,13 +71,13 @@ namespace QuizzApp.View
             DoubleAnimation doubleAnim = new DoubleAnimation();
             doubleAnim.From = 0.0;
             doubleAnim.To = 1.0;
-            doubleAnim.Duration = new Duration(TimeSpan.FromSeconds(1));
+            doubleAnim.Duration = new Duration(TimeSpan.FromSeconds(0.5));
             doubleAnim.AutoReverse = false;
             doubleAnim.AccelerationRatio = 0.6;
             doubleAnim.DecelerationRatio = 0.4;
 
-            var staticAnim = new DoubleAnimation(1.0, 0.0, new Duration(TimeSpan.FromSeconds(1)));
-            staticAnim.BeginTime = TimeSpan.FromSeconds(3);
+            var staticAnim = new DoubleAnimation(1.0, 0.0, new Duration(TimeSpan.FromSeconds(0.5)));
+            staticAnim.BeginTime = TimeSpan.FromSeconds(2.5);
 
             myStoryboard = new Storyboard();
             myStoryboard.Children.Add(doubleAnim);
@@ -108,7 +109,7 @@ namespace QuizzApp.View
             var value = element.Background as SolidColorBrush;
             SolidColorBrush brush = new SolidColorBrush(Colors.Transparent);
             element.Background = brush;
-            ColorAnimation animation = new ColorAnimation(value.Color, toColor, TimeSpan.FromSeconds(0.8));
+            ColorAnimation animation = new ColorAnimation(value.Color, toColor, TimeSpan.FromSeconds(0.3));
             animation.AccelerationRatio = 0.8;
             animation.DecelerationRatio = 0.2;
             myStoryboard = new Storyboard();
@@ -144,6 +145,7 @@ namespace QuizzApp.View
                 if (context.IsFinished)
                 {
                     returnButton.Visibility = Visibility.Visible;
+                    textAnswer.Visibility = Visibility.Hidden;
                 }
                 else if (context.IsTextQuestion)
                 {
@@ -163,6 +165,7 @@ namespace QuizzApp.View
         private void SubmitInputButton_Click(object sender, RoutedEventArgs e)
         {
             bool IsCorrect = false;
+            var context = DataContext as QuizzViewModel;
 
             if (textQuestionInputBox.Text.Trim() == string.Empty)
             {
@@ -173,10 +176,7 @@ namespace QuizzApp.View
             {
                 b.IsEnabled = false;
             }
-            if (this.DataContext is QuizzViewModel context)
-            {
-                IsCorrect = context.SubmitTextAnswer(textQuestionInputBox.Text);
-            }
+            IsCorrect = context.SubmitTextAnswer(textQuestionInputBox.Text);
             if (IsCorrect)
             {
                 FadeObject(CorrectText);
@@ -186,12 +186,15 @@ namespace QuizzApp.View
             {
                 AnimateColorTransition(textQuestionInputBox, Colors.IndianRed);
                 textQuestionInputBox.Foreground = new SolidColorBrush(Colors.White);
+                textAnswer.Visibility = Visibility.Visible;
+                textAnswer.Text = context.CorrectAnswer;
             }
             continueButton.Visibility = Visibility.Visible;
         }
 
         private void ResetInputBox(TextBox box)
         {
+            textAnswer.Visibility = Visibility.Hidden;
             box.Text = string.Empty;
             box.Background = new SolidColorBrush(Colors.White);
             box.Foreground = new SolidColorBrush(Colors.Black);
