@@ -20,8 +20,15 @@ namespace QuizzApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        public string BackgroundColor { get; private set; } = "#FF56A3FF";
+
         public MainWindow()
         {
+            var colorObject = ColorConverter.ConvertFromString(Properties.Settings.Default.Background);
+            if (colorObject != null)
+            {
+                BackgroundColor = Properties.Settings.Default.Background;
+            }
             InitializeComponent();
         }
     }

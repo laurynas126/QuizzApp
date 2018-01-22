@@ -7,7 +7,10 @@
         xmlns:util="clr-namespace:QuizzApp.Utility"
         mc:Ignorable="d"
         Title="{Binding Source={x:Static util:StringResources.Title}}" Height="500" Width="700"
-         MinWidth="800" MinHeight="650" UseLayoutRounding="False" WindowStartupLocation="CenterScreen" Background="#FF56A3FF" Icon="questionIcon.ico">
+        MinWidth="800" MinHeight="650" UseLayoutRounding="False"
+        Background="{Binding BackgroundColor, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+        WindowStartupLocation="CenterScreen" 
+        Icon="questionIcon.ico">
     <Frame Source="View\Home.xaml" NavigationUIVisibility="Hidden">
 
     </Frame>

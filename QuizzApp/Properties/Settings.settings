@@ -11,5 +11,8 @@
     <Setting Name="ResourceFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">Quizz</Value>
     </Setting>
+    <Setting Name="Background" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FF56A3FF</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

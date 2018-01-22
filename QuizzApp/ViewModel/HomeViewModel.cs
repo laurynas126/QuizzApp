@@ -52,7 +52,7 @@ namespace QuizzApp.ViewModel
         {
             NumberValues = new List<int>
             {
-                10, 20, 30, 50
+                20, 30, 50, 100, 999
             };
         }
 
