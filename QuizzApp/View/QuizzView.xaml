@@ -29,7 +29,7 @@
         <Label Content="{Binding AppTitle}" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Roboto Medium" FontSize="20"/>
         <Label x:Name="label" Content="{Binding SelectedCategory.Title}" HorizontalAlignment="Center" Margin="0,28,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Roboto Medium" FontSize="24"/>
         <Rectangle HorizontalAlignment="Center" Margin="0,-5,0,0" VerticalAlignment="Top" Fill="#4CFFFFFF" Width="{Binding ActualWidth, ElementName=label, Mode=OneWay}" Height="67" RadiusX="4" RadiusY="4" Panel.ZIndex="-99" MinWidth="140" />
-        <Rectangle HorizontalAlignment="Left" Margin="-5,60,60,272" VerticalAlignment="Top" Fill="#4CFFFFFF" Width="160" Height="50" RadiusX="4" RadiusY="4" />
+        <Rectangle HorizontalAlignment="Left" Margin="-5,60,60,272" VerticalAlignment="Top" Fill="#4CFFFFFF" Width="165" Height="50" RadiusX="4" RadiusY="4" />
         <TextBlock HorizontalAlignment="Left" Margin="50,65,50,290" VerticalAlignment="Top" FontFamily="Roboto" FontSize="18" Text="{Binding QuestionNumber}"/>
         <TextBlock HorizontalAlignment="Left" Margin="50,85,50,255" VerticalAlignment="Top" FontFamily="Roboto" FontSize="18" Text="{Binding CorrectAnswered}"/>
         <TextBlock x:Name="QuestionText" Text="{Binding Question}" HorizontalAlignment="Center" Margin="0,110,0,0" VerticalAlignment="Top" FontFamily="Roboto Medium" FontSize="28" TextWrapping="WrapWithOverflow" Padding="10" TextAlignment="Center" ToolTip=""/>

@@ -105,8 +105,8 @@ namespace QuizzApp.ViewModel
         {
             if (_currentQuestion == null || !_currentQuestion.IsFreeText)
                 return false;
-            var values = _currentQuestion.Answers[0].Text.Split(';').Select(value => value.Trim().ToLower()).Where(value => value != string.Empty);
-            if (values.Contains(answer.ToLower().Trim()))
+            answer = answer.ToLower().Trim();
+            if (CorrectTextAnswers(_currentQuestion).Contains(answer))
             {
                 statistic.CorrectAnswered++;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CorrectAnswered"));
@@ -115,7 +115,19 @@ namespace QuizzApp.ViewModel
             return false;
         }
 
-        public string CorrectAnswer => _currentQuestion.Answers[0].Text.Split(';').Select(value => value.Trim()).Where(value => value != string.Empty).First();
+        private IEnumerable<string> CorrectTextAnswers(Question question)
+        {
+            return question.CorrectAnswer
+                .Split(';')
+                .Select(value => value.Trim().ToLower())
+                .Where(value => value != string.Empty);
+        }
+
+        public string CorrectAnswer => _currentQuestion.CorrectAnswer
+            .Split(';')
+            .Select(value => value.Trim())
+            .Where(value => value != string.Empty)
+            .First();
 
         public void NextQuestion()
         {

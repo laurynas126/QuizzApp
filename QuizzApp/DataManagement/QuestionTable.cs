@@ -173,12 +173,22 @@ namespace QuizzApp.DataManagement
             int result = -1;
             var command = new SQLiteCommand(connection);
             string image = "NULL";
+
+            //Check if question is not empty and has correct answer
+            if (question.QuestionText.Trim() == string.Empty &&
+                (question.CorrectAnswer == null || 
+                question.CorrectAnswer.Trim() == string.Empty))
+            {
+                throw new EmptyQuestionException();
+            }
+
             if (question.ImageName != string.Empty)
                 image = question.ImageName;
             SQLiteParameter questionCol = new SQLiteParameter("question", question.QuestionText);
             SQLiteParameter imageParam = new SQLiteParameter("image", image);
             SQLiteParameter isFree = new SQLiteParameter("isFree", BoolToInt(question.IsFreeText));
             AddAnswerParameters(command, question);
+
 
             if (question.Id == -1)
                 command.CommandText = "INSERT INTO multi_question VALUES(NULL, @isFree, @question, @image, @correct, @alt1, @alt2, @alt3)";
@@ -210,7 +220,11 @@ namespace QuizzApp.DataManagement
         public static long GetQuestionId(SQLiteConnection connection, Question question)
         {
             long result = -1;
-            using (var command = new SQLiteCommand("SELECT id FROM multi_question WHERE question = @question AND correct_answer = @answer", connection))
+            using (var command = new SQLiteCommand(
+                "SELECT id " +
+                "FROM multi_question " +
+                "WHERE question = @question AND " +
+                "correct_answer = @answer", connection))
             {
                 command.Parameters.Add(new SQLiteParameter("question", question.QuestionText));
                 command.Parameters.Add(new SQLiteParameter("answer", question.Answers[0]));

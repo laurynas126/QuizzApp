@@ -139,6 +139,10 @@ namespace QuizzApp.ViewModel
                     MessageBox.Show("Unknown SQL error: " + ex.ResultCode.ToString());
                 }
             }
+            catch (EmptyQuestionException ex)
+            {
+                MessageBox.Show(StringResources.EmptyQuestionError);
+            }
         }
 
         public void DeleteQuestion()

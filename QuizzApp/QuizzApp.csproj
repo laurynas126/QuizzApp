@@ -105,6 +105,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Utility\CollectionUtil.cs" />
     <Compile Include="Utility\CommandHandler.cs" />
+    <Compile Include="Utility\EmptyQuestionException.cs" />
     <Compile Include="Utility\FileHandler.cs" />
     <Compile Include="Utility\StringResources.cs" />
     <Compile Include="ViewModel\EditViewModel.cs" />

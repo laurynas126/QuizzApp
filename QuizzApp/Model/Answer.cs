@@ -8,7 +8,12 @@ namespace QuizzApp.Model
 {
     public class Answer
     {
-        public string Text { get; set; }
+        private string _text;
+        public string Text {
+            get { return _text; }
+            set { _text = value.Trim(); }
+        }
+
         public bool Correct { get; }
 
         public Answer(string text, bool correct)

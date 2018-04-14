@@ -9,7 +9,13 @@ namespace QuizzApp.Model
     public class Question
     {
         public long Id { get; set; } = -1;
-        public string QuestionText { get; set; }
+
+        private string _questionText;
+        public string QuestionText {
+            get { return _questionText; }
+            set { _questionText = value.Trim(); }
+        }
+
         public bool IsFreeText { get; set; }
         public List<Answer> Answers { get; }
         public string ImageName { get; set; }
@@ -18,7 +24,9 @@ namespace QuizzApp.Model
         {
             get
             {
-                if (Answers.Count >= 1) return Answers[0].Text;
+                if (Answers.Count >= 1 &&
+                    Answers.First().Correct)
+                    return Answers.First().Text;
                 return null;
             }
         }
