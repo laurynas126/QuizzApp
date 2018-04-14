@@ -1,5 +1,7 @@
 # QuizzApp
 
+![Main window](https://i.imgur.com/uVVvwBf.png)
+
 QuizzApp is a quizz-type game, where player is given to answer randomly selected question from chosen category. 
 Player can choose how many questions will be present in a single game. During the game, the user can see how many questions he has already
 answered and how many of them were correct. This game has two types of questions: 
@@ -13,6 +15,9 @@ user submitted "lITHuanIA" then it will count as correct.
 
 Every question can also have a single image attached to it. The image can be used for quesiton (e. g. "Who is this person" 
 where the persons photo is attached to it) or just as a decoration.
+
+![Game screen](https://i.imgur.com/67ILl07.png)
+
 
 User can also create his own categories and questions. 
 * _Choice-based questions_ - these questions can have up to 4 possible choices, from which 1 must be correct.
