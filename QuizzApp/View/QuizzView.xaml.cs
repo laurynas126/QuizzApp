@@ -142,6 +142,7 @@ namespace QuizzApp.View
             if (this.DataContext is QuizzViewModel context)
             {
                 context.NextQuestion();
+                ResetInputBox(textQuestionInputBox);
                 if (context.IsFinished)
                 {
                     returnButton.Visibility = Visibility.Visible;
@@ -149,7 +150,6 @@ namespace QuizzApp.View
                 }
                 else if (context.IsTextQuestion)
                 {
-                    ResetInputBox(textQuestionInputBox);
                     SubmitInputButton.IsEnabled = true;
                 }
             }
