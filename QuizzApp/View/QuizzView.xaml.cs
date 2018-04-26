@@ -199,5 +199,16 @@ namespace QuizzApp.View
             box.Background = new SolidColorBrush(Colors.White);
             box.Foreground = new SolidColorBrush(Colors.Black);
         }
+
+        private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!(DataContext is QuizzViewModel context))
+                return;
+            if (e.Key == Key.NumPad1)
+            {
+                context.ChosenAnswer(context.Answers[0]);
+            }
+        }
+
     }
 }

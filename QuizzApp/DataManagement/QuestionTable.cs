@@ -77,7 +77,12 @@ namespace QuizzApp.DataManagement
             }
         }
 
-        public static List<Question> GetQuestionsByCategory(long category = 0, bool inverted = false)
+        /// <summary>
+        /// Gets questions from selected category. If no category ID is specified, then returns all questions.
+        /// </summary>
+        /// <param name="category">Category ID (optional)</param>
+        /// <returns>List of question from selected category. If category = 0, then returns all questions</returns>
+        public static List<Question> GetQuestionsByCategory(long category = 0)
         {
             List<Question> questions = new List<Question>();
             using (var connection = new SQLiteConnection(StringResources.ConnectionString))
@@ -172,17 +177,16 @@ namespace QuizzApp.DataManagement
         {
             int result = -1;
             var command = new SQLiteCommand(connection);
-            string image = "NULL";
+            string image = null;
 
             //Check if question is not empty and has correct answer
-            if (question.QuestionText.Trim() == string.Empty &&
-                (question.CorrectAnswer == null || 
-                question.CorrectAnswer.Trim() == string.Empty))
+            if (string.IsNullOrWhiteSpace(question.QuestionText) ||
+                string.IsNullOrWhiteSpace(question.CorrectAnswer))
             {
                 throw new EmptyQuestionException();
             }
 
-            if (question.ImageName != string.Empty)
+            if (!string.IsNullOrWhiteSpace(question.ImageName))
                 image = question.ImageName;
             SQLiteParameter questionCol = new SQLiteParameter("question", question.QuestionText);
             SQLiteParameter imageParam = new SQLiteParameter("image", image);

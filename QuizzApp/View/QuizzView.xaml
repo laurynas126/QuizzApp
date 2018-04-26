@@ -6,8 +6,10 @@
       xmlns:local="clr-namespace:QuizzApp.View"
       x:Class="QuizzApp.View.QuizzView"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="650"
-      Title="Quizz">
+      d:DesignHeight="450" 
+      d:DesignWidth="650"
+      Title="Quizz" 
+      PreviewKeyDown="Page_PreviewKeyDown">
     <Page.Resources>
         <ControlTemplate x:Key="SimpleButtonControlResource" TargetType="{x:Type Button}">
 
@@ -67,7 +69,9 @@
                             FontFamily="Roboto"
                             FontSize="18"
                             Click="AnswerButtonClick" 
-                            HorizontalContentAlignment="Center" Height="30" FontWeight="Normal" />
+                            HorizontalContentAlignment="Center"
+                            Height="30"
+                            FontWeight="Normal" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -86,7 +90,9 @@
                 Margin="60,280,60,42" 
                 VerticalAlignment="Bottom" 
                 HorizontalAlignment="Center" 
-                FontSize="18" Click="SubmitInputButton_Click" IsDefault="True"/>
+                FontSize="18"
+                Click="SubmitInputButton_Click"
+                IsDefault="True"/>
         <Rectangle Margin="50,280,50,-5" Fill="#4CFFFFFF" RadiusX="4" RadiusY="4" Panel.ZIndex="-10" VerticalAlignment="Bottom" Height="115" />
 
 
@@ -100,7 +106,8 @@
                 FontSize="18"
                 Visibility="Hidden" 
                 Click="ContinueButton_Click" 
-                Padding="20,1" IsDefault="True">
+                Padding="20,1"
+                IsDefault="True">
         </Button>
 
         <Button x:Name="quitButton"
@@ -111,7 +118,9 @@
                 Click="QuitButton_Click" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
-                BorderThickness="0" Width="42" IsCancel="True"/>
+                BorderThickness="0"
+                Width="42"
+                IsCancel="True"/>
 
         <Button x:Name="returnButton"
                 Content="Return Home" 
@@ -121,7 +130,8 @@
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Bottom"
                 Visibility="Hidden"
-                Margin="0,0,0,10" FontSize="18" Padding="10,1"/>
-
+                Margin="0,0,0,10"
+                FontSize="18"
+                Padding="10,1"/>
     </Grid>
 </Page>

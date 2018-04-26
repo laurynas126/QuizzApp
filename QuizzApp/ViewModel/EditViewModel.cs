@@ -23,7 +23,7 @@ namespace QuizzApp.ViewModel
 
         public ObservableCollection<Category> CategoryList { get => _categories; }
 
-        private readonly List<Question> _questions = QuestionTable.GetQuestionsByCategory(0);
+        private readonly List<Question> _questions = QuestionTable.GetQuestionsByCategory();
 
         public ObservableCollection<Question> AllQuestionList
         {
@@ -42,13 +42,13 @@ namespace QuizzApp.ViewModel
         public bool CanAdd { get => SelectedCategory != null && SelectedQuestion != null && !SelectedCategory.Questions.Contains(SelectedQuestion); }
         public bool CanRemove { get => SelectedCategory != null && SelectedQuestion != null && SelectedCategory.Questions.Contains(SelectedQuestion); }
 
-        private Question _question;
+        private Question _selectedQuestion;
         public bool IsSelectedQuestion { get => SelectedQuestion != null; }
         public Question SelectedQuestion {
-            get => _question;
+            get => _selectedQuestion;
             set
             {
-                _question = value;
+                _selectedQuestion = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelectedQuestion"));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CanAdd"));
@@ -73,6 +73,18 @@ namespace QuizzApp.ViewModel
 
         public EditViewModel() { }
 
+        public void AddToCategory()
+        {
+            if (!CanAdd) return;
+            if (CategoryQuestionTable.AddCategoryQuestion(SelectedCategory, SelectedQuestion) <= 0)
+            {
+                MessageBox.Show("Could not add question to category");
+                return;
+            }
+            SelectedCategory.Questions.Add(SelectedQuestion);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+        }
+
         public void DeleteCommand()
         {
             var result = MessageBox.Show("This action cannot be undone. Are you sure?", $"Delete \"{SelectedCategory.Title}\" category", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -85,10 +97,44 @@ namespace QuizzApp.ViewModel
             }
         }
 
+        public void DeleteQuestion()
+        {
+            QuestionTable.DeleteQuestion(SelectedQuestion);
+            CategoryQuestionTable.DeleteQuestion(SelectedQuestion);
+            _questions.Remove(SelectedQuestion);
+            if (IsSelectedCategory)
+            {
+                SelectedCategory.Questions.Remove(SelectedQuestion);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedCategory"));
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
+        }
+
         public void NewCategory()
         {
             SelectedCategory = new Category("Untitled");
             CategoryList.Add(SelectedCategory);
+        }
+
+
+
+        public void NewQuestion()
+        {
+            SelectedQuestion = new Question("", new string[] { "", "", "", "" });
+        }
+
+        public void NewTextQuestion()
+        {
+            SelectedQuestion = new Question("", new string[] { "" });
+            SelectedQuestion.IsFreeText = true;
+        }
+
+        public void RemoveFromCategory()
+        {
+            if (!CanRemove) return;
+            CategoryQuestionTable.DeleteCategoryQuestion(SelectedCategory, SelectedQuestion);
+            SelectedCategory.Questions.Remove(SelectedQuestion);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
         }
 
         public void SaveCategory()
@@ -106,25 +152,23 @@ namespace QuizzApp.ViewModel
             }
         }
 
-        public void NewQuestion()
-        {
-            SelectedQuestion = new Question("", new string[] { "", "", "", "" });
-        }
-
-        public void NewTextQuestion()
-        {
-            SelectedQuestion = new Question("", new string[] { "" });
-            SelectedQuestion.IsFreeText = true;
-        }
-
         public void SaveQuestion()
         {
+            long preSaveQuestionID = SelectedQuestion.Id;
             try
             {
                 SelectedQuestion.ImageName = FileHandler.SaveFileToResourceFolder(SelectedQuestion.ImageName);
+                if (SelectedQuestion.Id == -1 && _questions.Contains(SelectedQuestion) ||
+                    _questions.Select(q => q).Where(q => q.Equals(SelectedQuestion)).Count() > 1)
+                {
+                    MessageBox.Show($"Duplicate question: {SelectedQuestion.QuestionText}");
+                    return;
+                }
                 QuestionTable.SaveQuestion(SelectedQuestion);
-                if (!_questions.Contains(SelectedQuestion))
+                if (preSaveQuestionID == -1)
+                {
                     _questions.Add(SelectedQuestion);
+                }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
             }
@@ -145,39 +189,6 @@ namespace QuizzApp.ViewModel
             }
         }
 
-        public void DeleteQuestion()
-        {
-            QuestionTable.DeleteQuestion(SelectedQuestion);
-            CategoryQuestionTable.DeleteQuestion(SelectedQuestion);
-            _questions.Remove(SelectedQuestion);
-            if(IsSelectedCategory)
-            {
-                SelectedCategory.Questions.Remove(SelectedQuestion);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedCategory"));
-            }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
-        }
-
-        public void AddToCategory()
-        {
-            if (!CanAdd) return;
-            if (CategoryQuestionTable.AddCategoryQuestion(SelectedCategory, SelectedQuestion) <= 0)
-            {
-                MessageBox.Show("Could not add question to category");
-                return;
-            }
-            SelectedCategory.Questions.Add(SelectedQuestion);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
-        }
-
-        public void RemoveFromCategory()
-        {
-            if (!CanRemove) return;
-            CategoryQuestionTable.DeleteCategoryQuestion(SelectedCategory, SelectedQuestion);
-            SelectedCategory.Questions.Remove(SelectedQuestion);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AllQuestionList"));
-        }
-
         public void SelectImage()
         {
             OpenFileDialog ofd = new OpenFileDialog()
@@ -189,5 +200,7 @@ namespace QuizzApp.ViewModel
             SelectedQuestion.ImageName = ofd.FileName;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedQuestion"));
         }
+
+
     }
 }

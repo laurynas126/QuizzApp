@@ -60,8 +60,11 @@ namespace QuizzApp.Model
         {
             if (obj is Question q)
             {
-                //return q.Id == this.Id;
-                return q.QuestionText == this.QuestionText && q.ImageName == this.ImageName && q.Answers[0].Text == this.Answers[0].Text;
+                return q.QuestionText == this.QuestionText && 
+                      (q.ImageName == this.ImageName ||
+                      (string.IsNullOrWhiteSpace(q.ImageName) == 
+                       string.IsNullOrWhiteSpace(this.ImageName))) &&
+                       q.CorrectAnswer == this.CorrectAnswer;
             }
             return false;
         }

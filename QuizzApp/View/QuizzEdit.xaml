@@ -115,23 +115,22 @@
                  HorizontalAlignment="Left" 
                  VerticalAlignment="Top" 
                  Margin="429,170,0,10" 
-                 VerticalContentAlignment="Center" Click="NewFreeQuestionButton_Click" FontStretch="SemiCondensed" FontSize="11" Height="22"/>
+                 VerticalContentAlignment="Center" Click="NewFreeQuestionButton_Click" FontStretch="SemiCondensed" FontSize="11" Height="22" Width="105"/>
 
         <Button  x:Name="SaveQuestionButton"
                  Content="Save"
                  IsEnabled="{Binding IsSelectedQuestion}"           
                  HorizontalAlignment="Left" 
                  VerticalAlignment="Top" 
-                 Margin="526,170,0,10" 
-                 VerticalContentAlignment="Center" Click="SaveQuestionButton_Click" Width="60">
-        </Button>
+                 Margin="533,170,0,10" 
+                 VerticalContentAlignment="Center" Click="SaveQuestionButton_Click" Width="60" FontWeight="Bold"/>
         <Button  x:Name="DeleteQuestionButton"
                  Content="Delete" 
                  IsEnabled="{Binding IsSelectedQuestion}"           
                  HorizontalAlignment="Right" 
                  VerticalAlignment="Top" 
                  Margin="520,170,10,10" 
-                 VerticalContentAlignment="Center" Width="60" Click="DeleteQuestionButton_Click" HorizontalContentAlignment="Center">
+                 VerticalContentAlignment="Center" Width="60" Click="DeleteQuestionButton_Click" HorizontalContentAlignment="Center" FontWeight="Bold">
         </Button>
 
         <Button  x:Name="AddToCategory"
